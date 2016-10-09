@@ -1,0 +1,184 @@
+{ var indentStack = [], indentStr=""; }
+
+CUE = obj:stmts {return obj}
+/* ---  Keywords -- */
+
+REM = "REM" ws 
+GENRE = "GENRE" ws
+DATE = "DATE" ws
+PERFORMER = "PERFORMER" ws
+TITLE = "TITLE" ws
+FILE = "FILE" ws
+TRACK = "TRACK" ws
+AUDIO = "AUDIO" ws
+INDEX = "INDEX" ws
+
+/* --- String -- */
+
+string "string"
+       =quot chars:char* quot ws {return chars.join(""); }
+
+word "word"
+     = chars:char* {return chars.join("")}
+/*-- Character ---**/
+char "char"
+  = unescaped /
+    escape
+    sequence:(
+      quot
+      /"\\" 
+      /"b" {return "\b";}
+      /"f" {return "\f";}
+      /"n" {return "\n";}
+      /"r" {return "\r";}
+      /"t" {return "\t";}
+      /"u" digits:$(HEXDIG HEXDIG HEXDIG HEXDIG) {
+          return String.fromCharCode(parseInt(digits,16));
+      }
+
+    )
+    {return sequence}
+
+escape = "\\"
+quot = '"'
+unescaped = [^\0-\x1F\x22\x5C]
+
+/* Special numbers */
+year = d:YEAR ws {return parseInt(d.join(""))}
+number = d:NUMBER ws {console.log(d); return parseInt(d.join(""))}
+timecode= m:number":" s:number ":" ms:number ws {
+          return new TimeCode(0,m,s,ms);
+          return 0
+     }
+
+/* Regular expression */
+DIGIT=[0-9]
+HEXDIG=[0-9a-f]
+YEAR=[12][0-9][0-9][0-9]
+NUMBER=[0-9]+
+
+/*-- Indent --*/
+ws = [ \t]*
+
+
+INDENT = &(
+             ind:[ \t]+
+             &{return ind.length > indentStr.length;}
+             {
+                indentStack.push(indentStr);
+                indentStr=ind.join('');
+                console.log("ind <"+indentStr+">");
+                //peg$currPos = location().end.offset;
+             }
+       )
+
+LEVEL = ind:[ \t]* &{return ind.join('') === indentStr;}
+{ console.log("lvl <"+indentStr+">");}
+      
+EOL = "\r\n" / "\n" / "\r"
+
+DEDENT = "" {indentStr = indentStack.pop()}
+
+/*-- Stmt --*/
+genre_stmt =
+           ws REM GENRE field:word {console.log("genre"); return {name:"genre",value:field}}
+
+date_stmt =
+           REM DATE field:year {return {name:"date",value:field}}
+
+perf_stmt =
+           PERFORMER field:string {return {name:"artist",value:field}}
+
+title_stmt =
+           TITLE field:string {return {name:"title",value:field}}
+
+index_stmt =
+           INDEX idx:number time:timecode {return {name:"index",value:{index:idx,time:time}} } 
+
+track_prop =
+           prop:title_stmt  / prop:index_stmt / prop:perf_stmt {console.log(prop); return prop}
+
+track_header = TRACK idx:number AUDIO {console.log(idx); return {index:idx,type:"audio"}}
+
+track_prop_line =
+                LEVEL prop:track_prop {return prop;}
+track_stmt
+  = hdr:track_header EOL INDENT 
+           decls:(
+                  head:track_prop_line
+                  tail:(EOL next:track_prop_line {return next;})*
+                  {
+                    var result = hdr;
+                    [head].concat(tail).forEach(function(el){
+                      if(el.name == "index" && el.value.index == 1){
+                           result.start = el.value.time;
+                      }
+                      else if(el.name == "index" && el.value.index == 0){
+                           result.pregap = el.value.time;
+                      }
+                      else {
+                           result[el.name] = el.value;
+                      }
+                    });
+                    return result;
+                  }
+           )?
+           DEDENT {return {name:"track",value:decls}}
+
+
+
+track_stmt_line = LEVEL t:track_stmt {return t;}
+file_stmt =
+           FILE field:string typ:word EOL INDENT
+		decls:(
+			head:track_stmt_line
+			tail:(EOL next:track_stmt_line {return next;})*
+			{
+				var result = {};
+				[head].concat(tail).forEach(function(el){
+					result[el.value.index] = el.value;
+				})
+				return result;
+			}
+		)
+	   DEDENT {
+          for(var idx in decls){
+                  decls[idx].filetype = typ;
+                  decls[idx].filename = field;
+          }
+          return {name:'tracks',value:decls};
+     }
+
+stmt =
+     genre_stmt / date_stmt / perf_stmt / title_stmt / file_stmt
+     
+
+stmt_start = INDENT? l:stmt {return l}
+stmt_line = LEVEL l:stmt  {return l}
+
+stmts = decls:(
+        head:stmt_start
+        tail:(EOL+ next:stmt_line {return next;})*
+        {
+          var result = {};
+          function best(lst,scorer){
+              var best = null;
+              for(var id in lst){
+                     var el = lst[id];
+                     if(best == null || scorer(best) < scorer(el)){
+                             best = el;
+                     }
+              }
+              return best;
+          }
+          [head].concat(tail).forEach(function(el){
+            if(el.name == "tracks"){
+                       result.start = best(el.value,function(el){return -el.start.msec()}).start;
+                       result.end = best(el.value,function(el){return el.start.msec()}).start;           
+            }
+            result[el.name] = el.value;
+          })
+          return result;
+        }
+      )?
+

@@ -1,0 +1,62 @@
+## Trackblaster Import Instructions
+
+Below are import instructions.
+
+### CUE File Importer
+
+Navigate to CUE File Import Tool
+	
+	people.csail.mit.edu/sachour/wmbr/conv/cue.html
+	
+**Selecting Starting Time**: Select the starting time of your show. 
+
+**Selecting Cue File**: You can pass your CUE file into the tool using one
+of the following two methods.
+
+1. select your cue file using the file chooser
+2.  copy the contents of the cue file into the text box, where it says `paste your cue file here`
+
+**Converting your CUE File**: The tool will automatically convert your cue file to a trackblaster playlist. The trackblaster playlist will appear in the box that says `the trackblaster version of your cue file will appear here`.
+
+ - If the file is successfully converted, a download button that says `Download Trackblaster Playlist` will appear.
+ 
+ - If the file failed to convert, there will be no text where the trackblaster playlist should appear and an error message will appear below the text box. If this occurs, please email me (sachour AT mit DOT edu) the file.
+ 
+ **Downloading your TAB file**: To download the trackblaster playlist, click `Download Trackblaster Playlist`. The playlist will be saved as `trackblaster.tab`
+
+### Spotify Importer
+
+Navigate to Spotify File Import Tool
+	
+	people.csail.mit.edu/sachour/wmbr/conv/spotify.html
+	
+Documentation Coming Soon...
+
+### Known Issues
+
+Unicode characters are not handled properly yet.
+
+### Importing your TAB file to Trackblaster
+
+Navigate to trackblaster.
+	
+	http://www.track-blaster.com/wmbr/
+	
+In order to import the data, you need to have one of your playlists open:
+
+ - **Creating a New Playlist**: Create a new playlist (`DJs Only` -> `New Playlist`) for your show if you haven't already, and click `Add` to create the playlist with the information entered then click on `ENTER SONGS NOW`.
+
+ - **Editing an Existing Playlist**: Select an existing playlist and click the edit icon to edit it.
+
+#### Uploading the Data
+
+Select `DJs Only` -> `Upload Data` and select the `playlist.tab` file and click `Upload`.
+
+**Mapping The Fields**: Set the following mappings in the `Map your fields to Track-Blaster's page`
+
+ - `Type` to `Record Type`
+ - `Time` to `Song Start Time`
+ - `Artist` to `Song Artist`
+ - `Song` to `Song Title` and 
+
+Click the `Map` button when finished. You will now see a preview of your playlist. If you like what you see, press `Confirm`.

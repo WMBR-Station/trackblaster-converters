@@ -1,0 +1,241 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<style>
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote {
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family: "Helvetica Neue", Helvetica, "Hiragino Sans GB", Arial, sans-serif;
+    font-size: 13px;
+    line-height: 18px;
+    color: #737373;
+    background-color: white;
+    margin: 10px 13px 10px 13px;
+}
+table {
+	margin: 10px 0 15px 0;
+	border-collapse: collapse;
+}
+td,th {	
+	border: 1px solid #ddd;
+	padding: 3px 10px;
+}
+th {
+	padding: 5px 10px;	
+}
+
+a {
+    color: #0069d6;
+}
+a:hover {
+    color: #0050a3;
+    text-decoration: none;
+}
+a img {
+    border: none;
+}
+p {
+    margin-bottom: 9px;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: #404040;
+    line-height: 36px;
+}
+h1 {
+    margin-bottom: 18px;
+    font-size: 30px;
+}
+h2 {
+    font-size: 24px;
+}
+h3 {
+    font-size: 18px;
+}
+h4 {
+    font-size: 16px;
+}
+h5 {
+    font-size: 14px;
+}
+h6 {
+    font-size: 13px;
+}
+hr {
+    margin: 0 0 19px;
+    border: 0;
+    border-bottom: 1px solid #ccc;
+}
+blockquote {
+    padding: 13px 13px 21px 15px;
+    margin-bottom: 18px;
+    font-family:georgia,serif;
+    font-style: italic;
+}
+blockquote:before {
+    content:"\201C";
+    font-size:40px;
+    margin-left:-10px;
+    font-family:georgia,serif;
+    color:#eee;
+}
+blockquote p {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 18px;
+    margin-bottom: 0;
+    font-style: italic;
+}
+code, pre {
+    font-family: Monaco, Andale Mono, Courier New, monospace;
+}
+code {
+    background-color: #fee9cc;
+    color: rgba(0, 0, 0, 0.75);
+    padding: 1px 3px;
+    font-size: 12px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+pre {
+    display: block;
+    padding: 14px;
+    margin: 0 0 18px;
+    line-height: 16px;
+    font-size: 11px;
+    border: 1px solid #d9d9d9;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+pre code {
+    background-color: #fff;
+    color:#737373;
+    font-size: 11px;
+    padding: 0;
+}
+sup {
+    font-size: 0.83em;
+    vertical-align: super;
+    line-height: 0;
+}
+* {
+	-webkit-print-color-adjust: exact;
+}
+@media screen and (min-width: 914px) {
+    body {
+        width: 854px;
+        margin:10px auto;
+    }
+}
+@media print {
+	body,code,pre code,h1,h2,h3,h4,h5,h6 {
+		color: black;
+	}
+	table, pre {
+		page-break-inside: avoid;
+	}
+}
+.good {
+ color:#19A347;
+}
+.bad {
+ color:#FF5C33;
+}
+</style>
+<title>Trackblaster Import Instructions</title>
+<script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax:{inlineMath:[['$$$','$$$']]}});</script><script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+<h2>Trackblaster Import Instructions</h2>
+
+<p>Below are import instructions.</p>
+
+<h3>CUE File Importer</h3>
+
+<p>Navigate to CUE File Import Tool</p>
+
+<pre><code>people.csail.mit.edu/sachour/wmbr/conv/cue.html
+</code></pre>
+
+<p><strong>Selecting Starting Time</strong>: Select the starting time of your show.</p>
+
+<p><strong>Selecting Cue File</strong>: You can pass your CUE file into the tool using one
+of the following two methods.</p>
+
+<ol>
+<li>select your cue file using the file chooser</li>
+<li>copy the contents of the cue file into the text box, where it says <code>paste your cue file here</code></li>
+</ol>
+
+
+<p><strong>Converting your CUE File</strong>: The tool will automatically convert your cue file to a trackblaster playlist. The trackblaster playlist will appear in the box that says <code>the trackblaster version of your cue file will appear here</code>.</p>
+
+<ul>
+<li><p>If the file is successfully converted, a download button that says <code>Download Trackblaster Playlist</code> will appear.</p></li>
+<li><p>If the file failed to convert, there will be no text where the trackblaster playlist should appear and an error message will appear below the text box. If this occurs, please email me (sachour AT mit DOT edu) the file.</p></li>
+</ul>
+
+
+<p> <strong>Downloading your TAB file</strong>: To download the trackblaster playlist, click <code>Download Trackblaster Playlist</code>. The playlist will be saved as <code>trackblaster.tab</code></p>
+
+<h3>Spotify Importer</h3>
+
+<p>Navigate to Spotify File Import Tool</p>
+
+<pre><code>people.csail.mit.edu/sachour/wmbr/conv/spotify.html
+</code></pre>
+
+<p>Documentation Coming Soon...</p>
+
+<h3>Known Issues</h3>
+
+<p>Unicode characters are not handled properly yet.</p>
+
+<h3>Importing your TAB file to Trackblaster</h3>
+
+<p>Navigate to trackblaster.</p>
+
+<pre><code>http://www.track-blaster.com/wmbr/
+</code></pre>
+
+<p>In order to import the data, you need to have one of your playlists open:</p>
+
+<ul>
+<li><p><strong>Creating a New Playlist</strong>: Create a new playlist (<code>DJs Only</code> -> <code>New Playlist</code>) for your show if you haven't already, and click <code>Add</code> to create the playlist with the information entered then click on <code>ENTER SONGS NOW</code>.</p></li>
+<li><p><strong>Editing an Existing Playlist</strong>: Select an existing playlist and click the edit icon to edit it.</p></li>
+</ul>
+
+
+<h4>Uploading the Data</h4>
+
+<p>Select <code>DJs Only</code> -> <code>Upload Data</code> and select the <code>playlist.tab</code> file and click <code>Upload</code>.</p>
+
+<p><strong>Mapping The Fields</strong>: Set the following mappings in the <code>Map your fields to Track-Blaster's page</code></p>
+
+<ul>
+<li><code>Type</code> to <code>Record Type</code></li>
+<li><code>Time</code> to <code>Song Start Time</code></li>
+<li><code>Artist</code> to <code>Song Artist</code></li>
+<li><code>Song</code> to <code>Song Title</code> and</li>
+</ul>
+
+
+<p>Click the <code>Map</code> button when finished. You will now see a preview of your playlist. If you like what you see, press <code>Confirm</code>.</p>
+</body>
+</html>

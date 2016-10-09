@@ -1,0 +1,29 @@
+.parameters {
+    font-size:1.5em;
+    background-color:white;
+    color:dark-grey;
+    padding:1em;
+}
+.download {
+    font-size:1.5em;
+    background-color:white;
+    color:dark-grey;
+    padding:1em;
+}
+.export-options{
+    padding:1em;
+    font-size:1.2em;
+    user-select:none;
+}
+.export-header {
+    font-weight:bold;
+}
+.export {
+}
+.disabled {
+    color:lightgrey;
+}
+body {
+    text-align:left;
+
+}

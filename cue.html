@@ -1,0 +1,59 @@
+<head>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pegjs/0.9.0/peg.min.js"></script>
+      
+	<script   src="https://code.jquery.com/jquery-3.1.0.min.js"   integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s="   crossorigin="anonymous"></script>
+	
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.0/moment.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+
+  	<script src="js-lib/download.js"></script>
+  	<script src="js/data.js"></script>
+  	<script src="js/trackblaster.js"></script>
+  	<script src="js/cue_parser.js"></script>
+		
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+  	<link href="css/style.css" rel="stylesheet">
+  	
+</head>
+
+
+<body class="container">
+	<h2 class="row">Cue to TrackBlaster Converter</h2>
+      
+
+	<div class="parameters row">
+      <div class="col-md-2">Show Time:</div>
+      <input id="start_time" type="text" class="timepicker col-md-2">
+      <div class="col-md-1"></div>
+		  <div class="col-md-2">Cue File:</div>
+		  <input class="col-md-3" id="file" type="file"></input>
+  </div>
+	<div class="row converter">
+	<div class="code col-md-5">
+	<textarea id="input" class="code" rows="20" cols="60" placeholder="paste your cue file here"></textarea>
+  </div>
+  <div class="col-md-5">
+  <textarea id="output" rows="20" cols="60"  class="code " disabled placeholder="the trackblaster version of your cue file will appear here"></textarea>
+  </div>
+  </div>
+  <div class="row debug">
+	    <div class="col-md-1 start-loc"> </div>
+	      <div class="col-md-1 end-loc"> </div>
+	      <div class="col-md-4 title"> </div>
+	      <div class="col-md-6 message"></div> 
+  </div>
+  <div class="row download">
+		<button id="download" class="col-md-6">Download Trackblaster File</button> </div>
+ <div class="row export-options">
+	  <div class="col-md-3 export-header">Export Options:</div>
+	  <div class="export col-md-1" field="Time">Time</div>
+	  <div class="export col-md-1" field="Song">Song</div>
+	  <div class="export col-md-1" field="Artist">Artist</div>
+  </div>
+
+
+</body>
+

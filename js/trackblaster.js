@@ -97,7 +97,7 @@ var TrackblasterGenerator = function(){
       this.playlist_field("Start Time",time_to_str(data.start))
       this.playlist_field("End Time",time_to_str(data.end))
       var i=0;
-      for(var track_idx in data.tracks){
+      for(var track_idx = 0; track_idx < data.tracks.length; track_idx++){
           var track = data.tracks[track_idx];
           console.log(track);
 	  this.track_field(i,"Type","S")

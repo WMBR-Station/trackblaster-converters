@@ -1,0 +1,88 @@
+
+M3U= m3uheader ENDL+ obj:stmts {return {tracks:obj}} /
+     m3uheader {return null}
+/* ---  Keywords -- */
+
+EXTM3U = "#EXTM3U" ws
+EXTINF = "#EXTINF"  ws
+DASH = "-" ws
+COMMA= "," ws
+COLON = ":" ws
+ENDL "ENDL" =
+    "\n" / "\r\n" / "\r"
+
+/* --- String -- */
+
+string 
+       =quot chars:char* quot ws {return chars.join(""); }
+
+word 
+     = chars:char* {return chars.join("")}
+
+/*-- Character ---**/
+char "char"
+  = unescaped /
+    escape
+    sequence:(
+      quot
+      /"\\" 
+      /"b" {return "\b";}
+      /"f" {return "\f";}
+      /"n" {return "\n";}
+      /"r" {return "\r";}
+      /"t" {return "\t";}
+      /"\(" {return "(";}
+      /"\)" {return ")";}
+      /"u" digits:$(HEXDIG HEXDIG HEXDIG HEXDIG) {
+          return String.fromCharCode(parseInt(digits,16));
+      }
+
+    )
+    {return sequence}
+
+escape = "\\"
+quot = '"'
+unescaped = [^\-#\0-\x1F\x22\x5C]
+
+DIGIT=[0-9]
+INTEGER = DIGIT*
+ws = [ \t]*
+PATH =[^\n]*
+HEXDIG=[0-9a-f]
+
+integer "integer" = i:INTEGER {return parseInt(i)}
+
+words "words"= w:word {return w;}
+
+m3uheader "m3uheader" = EXTM3U {
+       console.log("header")
+       return {key:"header",value:"extm3u"};
+   }
+
+track "track" =
+      EXTINF COLON duration:integer COMMA artist:words DASH title:words ENDL
+      filepath:PATH 
+      {
+        var data = {
+            duration:duration,
+            artist:artist,
+            title:title,
+            path:filepath.join("")
+        };
+        console.log("track",data);
+        return {key:"track",value:data}
+      }
+stmts =
+      decls:(
+        head:track
+        tail:(ENDL+ next:track {return next;})*
+        {
+          var tracks = [head].concat(tail);
+          var lst = tail
+          for(var i=0; i < lst.length; i++){
+                  var track = lst[i].value;
+                  tracks.push(track);
+          } 
+          return tracks;
+        }
+      ) {return decls}

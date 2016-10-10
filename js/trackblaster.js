@@ -93,9 +93,9 @@ var TrackblasterGenerator = function(){
           time.add(start_time);
           return time.to_string() 
       }
-      this.playlist_field("DJ Name",data.artist)
-      this.playlist_field("Start Time",time_to_str(data.start))
-      this.playlist_field("End Time",time_to_str(data.end))
+      //this.playlist_field("DJ Name",data.artist)
+      //this.playlist_field("Start Time",time_to_str(data.start))
+      //this.playlist_field("End Time",time_to_str(data.end))
       var i=0;
       for(var track_idx = 0; track_idx < data.tracks.length; track_idx++){
           var track = data.tracks[track_idx];

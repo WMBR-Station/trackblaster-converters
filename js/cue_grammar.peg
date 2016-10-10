@@ -1,6 +1,14 @@
-{ var indentStack = [], indentStr=""; }
+{ 
+	var indentStack = [], indentStr=""; 
+	var insert_at = function(arr,idx,v){
+		while(arr.length <= idx){
+			arr.push(null);
+		}
+		arr[idx] = v;
+	}
+}
 
-CUE = obj:stmts {return obj}
+CUE = obj:stmts {return {tracks:obj}}
 /* ---  Keywords -- */
 
 REM = "REM" ws 
@@ -134,18 +142,17 @@ file_stmt =
 			head:track_stmt_line
 			tail:(EOL next:track_stmt_line {return next;})*
 			{
-				var result = {};
+				var result = [];
 				[head].concat(tail).forEach(function(el){
-					result[el.value.index] = el.value;
+					el.value.filetype = typ;
+					el.value.filename = field;
+					insert_at(result,el.value.index, el.value);
 				})
 				return result;
 			}
 		)
 	   DEDENT {
-          for(var idx in decls){
-                  decls[idx].filetype = typ;
-                  decls[idx].filename = field;
-          }
+          
           return {name:'tracks',value:decls};
      }
 
@@ -160,25 +167,18 @@ stmts = decls:(
         head:stmt_start
         tail:(EOL+ next:stmt_line {return next;})*
         {
-          var result = {};
-          function best(lst,scorer){
-              var best = null;
-              for(var id in lst){
-                     var el = lst[id];
-                     if(best == null || scorer(best) < scorer(el)){
-                             best = el;
-                     }
-              }
-              return best;
-          }
-          [head].concat(tail).forEach(function(el){
-            if(el.name == "tracks"){
-                       result.start = best(el.value,function(el){return -el.start.msec()}).start;
-                       result.end = best(el.value,function(el){return el.start.msec()}).start;           
+          var results = [];
+	  [head].concat(tail).forEach(function(el){
+	    if(el.name == 'tracks'){
+		for(var i=0; i < el.value.length; i++){
+	            if(el.value[i] != null){
+			console.log("insertion",el.value[i]);
+		    	results.push(el.value[i]);
+		    }
+ 		}
             }
-            result[el.name] = el.value;
-          })
-          return result;
+	   })
+          return results;
         }
       )?
 

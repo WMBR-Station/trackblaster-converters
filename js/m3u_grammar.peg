@@ -50,7 +50,7 @@ ws = [ \t]*
 PATH =[^\n]*
 HEXDIG=[0-9a-f]
 
-integer "integer" = i:INTEGER {return parseInt(i)}
+integer "integer" = i:INTEGER {return parseInt(i.join(""))}
 
 words "words"= w:word {return w;}
 
@@ -77,12 +77,18 @@ stmts =
         head:track
         tail:(ENDL+ next:track {return next;})*
         {
-          var tracks = [head].concat(tail);
-          var lst = tail
-          for(var i=0; i < lst.length; i++){
-                  var track = lst[i].value;
-                  tracks.push(track);
+	  var tracks = [];
+          var data = [head].concat(tail);
+          
+          var timeobj = new TimeCode();
+	  var start = 0;
+	  for(var i=0; i < data.length; i++){
+                  var track = data[i].value;
+                  track.start = timeobj.from_sec(start);
+                  track.end = timeobj.from_sec(start + track.duration);
+		  tracks.push(track);
+		  start += track.duration;
           } 
           return tracks;
         }
-      ) {return decls}
+      ) 

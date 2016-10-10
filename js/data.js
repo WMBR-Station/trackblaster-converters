@@ -32,6 +32,12 @@ var TimeCode = function(h,m,s,ms){
 	now.time.add(ms,'milliseconds')
         return now;
     }
+    this.from_sec = function(s){
+	var now = new TimeCode(0,0,0,0);
+	now.time.add(s,'seconds')
+        return now;
+    }
+
 
     this.add = function(tc){
 	this.time = this.time.add(tc.time.hour(),"hours");

@@ -94,7 +94,7 @@ var SpotifyParser = function(){
         for(var i=1; i < artists.length-1; i++){
             names += ", " + artists[i].name;
         }
-        names += " and "+artists[artists.length-1];
+        names += " and "+artists[artists.length-1].name;
         return names;
     }
        

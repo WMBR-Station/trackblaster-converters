@@ -28,7 +28,7 @@ char "char"
       /"\\" 
       /"b" {return "\b";}
       /"f" {return "\f";}
-      /"n" {return "\n";}
+      /"n" {return "\our playlists to trackblaster here!</h2>n";}
       /"r" {return "\r";}
       /"t" {return "\t";}
       /"\(" {return "(";}

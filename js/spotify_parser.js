@@ -6,6 +6,7 @@ var compile = function(){
     var start_time =get_start_time(); 
     $(".download").hide();;
     $(".export-options").hide();
+    $("#output").html("");
     if(start_time == null){
 	return;
     }

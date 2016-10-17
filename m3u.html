@@ -23,36 +23,40 @@
 <body class="container">
 	<h2 class="row">Cue to TrackBlaster Converter</h2>
       
-
 	<div class="parameters row">
-      <div class="col-md-2">Show Time:</div>
-      <input id="start_time" type="text" class="timepicker col-md-2">
-      <div class="col-md-1"></div>
-		  <div class="col-md-2">M3U File:</div>
-		  <input class="col-md-3" id="file" type="file"></input>
-  </div>
+		<div class="col-md-2">Show Time:</div>
+		<input id="start_time" type="text" class="timepicker col-md-2">
+		<div class="col-md-1"></div>
+		<div class="col-md-2">M3U File:</div>
+		<input class="col-md-3" id="file" type="file"></input>
+	</div>
 	<div class="row converter">
-	<div class="code col-md-5">
-	<textarea id="input" class="code" rows="20" cols="60" placeholder="paste your cue file here"></textarea>
-  </div>
-  <div class="col-md-5">
-  <textarea id="output" rows="20" cols="60"  class="code " disabled placeholder="the trackblaster version of your cue file will appear here"></textarea>
-  </div>
-  </div>
-  <div class="row debug">
+		Export your ITunes playlist (File -> Library -> Export Playlist) as an M3U or M3U8 file, then upload or copy-paste
+		the file here
+	</div>
+	<div class="row converter">
+		<div class="code col-md-5">
+			<textarea id="input" class="code" rows="20" cols="60" placeholder="paste your m3u file here"></textarea>
+  		</div>
+ 		 <div class="col-md-5">
+  			<textarea id="output" rows="20" cols="60"  class="code " disabled placeholder="the trackblaster version of your m3u file will appear here"></textarea>
+  		</div>
+	</div>
+  	<div class="row debug">
 	    <div class="col-md-1 start-loc"> </div>
 	      <div class="col-md-1 end-loc"> </div>
 	      <div class="col-md-4 title"> </div>
 	      <div class="col-md-6 message"></div> 
-  </div>
-  <div class="row download">
-		<button id="download" class="col-md-6">Download Trackblaster File</button> </div>
- <div class="row export-options">
-	  <div class="col-md-3 export-header">Export Options:</div>
-	  <div class="export col-md-1" field="Time">Time</div>
-	  <div class="export col-md-1" field="Song">Song</div>
-	  <div class="export col-md-1" field="Artist">Artist</div>
-  </div>
+	</div>
+  	<div class="row download">
+		<button id="download" class="col-md-6">Download Trackblaster File</button> 
+	</div>
+ 	<div class="row export-options">
+		<div class="col-md-3 export-header">Export Options:</div>
+		<div class="export col-md-1" field="Time">Time</div>
+		<div class="export col-md-1" field="Song">Song</div>
+		<div class="export col-md-1" field="Artist">Artist</div>
+  	</div>
 
 
 </body>

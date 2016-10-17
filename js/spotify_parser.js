@@ -44,6 +44,10 @@ $(document).ready(function(){
         console.log("changed");
         compile();
     })
+    $("#input_convert").click(function(){
+        console.log("changed");
+        compile();
+    })
     $(".timepicker").timepicker({
 	    timeFormat: 'h:mm p',
     	    change:function(){

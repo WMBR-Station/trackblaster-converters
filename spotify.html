@@ -26,15 +26,19 @@
   </div>
 
   <div class=" converter row">
-	<div class="code col-md-5">
-	<textarea id="input" class="code" rows="20" cols="60">
-    https://open.spotify.com/track/1ucLr8unhoIDpNUrm3veN8
-    https://open.spotify.com/track/1z8TGCiKvZc6XYunGYVAbi
-	</textarea>
-  </div>
-  <div class="col-md-5">
-  <textarea id="output" rows="20" cols="60"  class="code " disabled></textarea>
-  </div>
+    <div class="code col-md-5">
+        <textarea id="input" class="code"
+                  placeholder="copy-paste list of tracks from spotify"
+                  rows="20" cols="60"></textarea>
+        <button id="input_convert" class="hidden convert">
+            Convert Spotify Playlist
+        </button>
+    </div>
+    <div class="col-md-5">
+        <textarea id="output"
+                  placeholder="trackblaster playlist will appear here"
+                  rows="20" cols="60"  class="code " disabled></textarea>
+    </div>
   </div>
   <div class="row debug">
 

@@ -4,6 +4,10 @@
     color:dark-grey;
     padding:1em;
 }
+.convert {
+    font-size:1.5em;
+    width:90%;
+}
 .download {
     font-size:1.5em;
     background-color:white;
@@ -22,6 +26,9 @@
 }
 .disabled {
     color:lightgrey;
+}
+.hidden {
+    display:none;
 }
 body {
     text-align:left;

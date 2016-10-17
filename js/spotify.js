@@ -2,14 +2,14 @@ var SpotifyParser = function(){
     this.init = function(){
         this.tracks = {};
         this.albums = {};
-	this.artists = {};
-	this.order = [];
+	      this.artists = {};
+	      this.order = [];
     }
     this.init_album = function(album_id){
-	if(album_id in this.albums && this.albums[album_id] != null){
-		return;
-	}	
-	this.albums[album_id] = null;
+	      if(album_id in this.albums && this.albums[album_id] != null){
+		        return;
+	      }	
+	      this.albums[album_id] = null;
     }
     this.get_album = function(album_id,cbk){
         if(album_id in this.albums && this.albums[album_id] != null){
@@ -23,7 +23,7 @@ var SpotifyParser = function(){
             console.log(data);
             that.albums[album_id] = data;
             if(cbk != undefined){
-            cbk();
+                cbk();
             }
         })
     }
@@ -128,22 +128,34 @@ var SpotifyParser = function(){
 
     this.parse = function(str,cbk){
         var tracks = str.split("\n");
+        if(tracks.length == 0){
+            return;
+        }
         this.order = [];
+        var regex = /[0-9A-Za-z]+/;
+
         for(var i=0; i < tracks.length; i++){
             var path = tracks[i].split("/");
-            var track_id = path[path.length-1];
-            this.tracks[track_id] = null;
-            this.order.push(track_id);
+            var track_id_maybe = path[path.length-1].trim();
+            var matches = regex.exec(track_id_maybe);
+            if(matches != null){
+                var track_id = matches[0];
+                console.log("track:"+track_id);
+                this.tracks[track_id] = null;
+                this.order.push(track_id);
+            }
         }
         var that = this;
         for(track_id in this.tracks){
             this.get_track(track_id,function(){
                 if(that.is_done()){
-                    console.log("completed",that.data);
+                    console.log("completed",
+                                that.tracks,that.albums);
                     cbk( that.to_model());
                 }
                 else {
-                    console.log("incomplete",that.data)
+                    console.log("incomplete",
+                                that.tracks,that.albums);
                 }
             })
         }

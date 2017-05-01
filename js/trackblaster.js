@@ -1,7 +1,7 @@
 var TrackblasterGenerator = function(){
 
    this.init = function(){
-        this.playlist_header = ["DJ Name","Date","Start Time", "End Time", "Program Name", "Header", "Subheader"];
+        this.playlist_header = ["DJ Name","Date", "Program Name", "Header", "Subheader"];
         this.playlist_row = {};
         
 	this.playlist_header_export = {};
@@ -9,7 +9,7 @@ var TrackblasterGenerator = function(){
 		var fld = this.playlist_header[i];
 		this.playlist_header_export[fld] = true;
 	}
-	this.tracks_header =  ["Hidden","Break","Type","Time","Artist","ArtistLink",
+	this.tracks_header =  ["Hidden","Break","Artist","ArtistLink",
                               "Composer","Song","Version","Album","Format","Label","LabelLink","Year",
                               "Misc","New","Comp","Comment"];
         this.track_rows = [];
@@ -61,7 +61,7 @@ var TrackblasterGenerator = function(){
                 play_vrow.push(this.playlist_row[key]);
             }
         }
-	//track fields
+	      //track fields
         for(var i=0; i < this.tracks_header.length; i++){
             var key = this.tracks_header[i];
             if(key in this.track_fields && this.track_header_export[key]){
@@ -84,15 +84,9 @@ var TrackblasterGenerator = function(){
         }
         return str;
     }
-    this.generate = function(data,start_time){
+    this.generate = function(data){
       this.table();
       var that = this;
-      var time_to_str = function(rel_time){
-          if(rel_time == undefined || start_time == undefined) return undefined;
-          var time = new TimeCode(rel_time.time)
-          time.add(start_time);
-          return time.to_string() 
-      }
       //this.playlist_field("DJ Name",data.artist)
       //this.playlist_field("Start Time",time_to_str(data.start))
       //this.playlist_field("End Time",time_to_str(data.end))
@@ -100,15 +94,13 @@ var TrackblasterGenerator = function(){
       for(var track_idx = 0; track_idx < data.tracks.length; track_idx++){
           var track = data.tracks[track_idx];
           console.log(track);
-	  this.track_field(i,"Type","S")
           this.track_field(i,"Artist",track.artist)
           this.track_field(i,"Song",track.title)
           this.track_field(i,"Album",track.album)
           this.track_field(i,"Year",track.year)
           this.track_field(i,"Composer",track.composer)
           this.track_field(i,"Label",track.label)
-          this.track_field(i,"Time",time_to_str(track.start))
-	  i++;
+	        i++;
       }
 
       return this.to_string();

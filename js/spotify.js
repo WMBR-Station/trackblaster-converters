@@ -18,7 +18,7 @@ var SpotifyParser = function(){
         }	
         this.albums[album_id] = null;
         var url = "https://api.spotify.com/v1/albums/"+album_id;
-                var that = this
+        var that = this
         $.get(url,function(data){
             console.log(data);
             that.albums[album_id] = data;
@@ -40,12 +40,12 @@ var SpotifyParser = function(){
         }	
         this.artists[artist_id] = null;
         var url = "https://api.spotify.com/v1/artists/"+artist_id;
-                var that = this
+        var that = this
         $.get(url,function(data){
             that.artists[artist_id] = data;
             console.log(data);
             if(cbk != undefined){
-            cbk();
+                cbk();
             }
         })
     }
@@ -59,18 +59,18 @@ var SpotifyParser = function(){
         $.get(url,function(data){
             that.tracks[track_id] = data;
             if(data.album != undefined){
-		    that.init_album(data.album.id); 
-	    }
-	    for(var i=0; i < data.artists.length; i++){
-		    //that.init_artist(data.artists[i].id);
-	    }
-	    if(data.album != undefined){
-		    that.get_album(data.album.id,cbk); 
-	    }
-	    for(var i=0; i < data.artists.length; i++){
-		    //that.get_artist(data.artists[i].id,cbk);
-	    }
-	    cbk();
+		            that.init_album(data.album.id); 
+	          }
+	          for(var i=0; i < data.artists.length; i++){
+		            //that.init_artist(data.artists[i].id);
+	          }
+	          if(data.album != undefined){
+		            that.get_album(data.album.id,cbk); 
+	          }
+	          for(var i=0; i < data.artists.length; i++){
+		            //that.get_artist(data.artists[i].id,cbk);
+	          }
+	          cbk();
         })
     }
     this._is_done = function(els){
@@ -100,26 +100,23 @@ var SpotifyParser = function(){
        
     this.to_model = function(){
         var tracks = [];
-        var start_code = new TimeCode(0,0,0,0);
         for(var i=0; i < this.order.length; i++){
-            var el = this.tracks[this.order[i]];
+        	  var el = this.tracks[this.order[i]];
             var track = {};
-	          track.start = new TimeCode(start_code.time)
             track.duration = new TimeCode().from_msec(el.duration_ms);
             track.title = el.name;
-	          track.artist = this.to_artist_list(el.artists);
-	          if(el.album != undefined){
-		            var album = this.albums[el.album.id];
-	    	        track.album = album.name;
-		            track.label = album.label;
-		            track.year = moment(album.release_date).year();
-	          }
-	          start_code.add(track.duration);
+		        track.artist = this.to_artist_list(el.artists);
+	  	      if(el.album != undefined){
+		    	      var album = this.albums[el.album.id];
+			          track.album = album.name;
+			          track.label = album.label;
+			          track.year = moment(album.release_date).year();
+		        }
             tracks.push(track);
         }
         return {
 		        artist:"self",
-            tracks:tracks
+            	tracks:tracks
         };
 
     }

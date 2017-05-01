@@ -1,5 +1,5 @@
 var grammar = null;
-var parser = null;
+var parser = new ItunesXMLParser();;
 var generator = new TrackblasterGenerator();
 
 var compile = function(){
@@ -13,7 +13,7 @@ var compile = function(){
     }
     try{
         var ir = parser.parse(src);
-        console.log(ir);
+        console.log("IR",ir);
         var result = generator.generate(ir);
         $("#output").val(result);
         $(".debug").hide();;
@@ -45,16 +45,7 @@ var update = function(){
 	compile();
 }
 
-var load_grammar = function(){
-    $.ajax({
-        url: 'js/cue_grammar.peg',
-        type: 'get',
-        success:function(html){
-            grammar = html;
-            parser = PEG.buildParser(grammar);
-        }
-    })
-}
+
 
 var read_file = function(){
     input = $("#file")[0];
@@ -69,32 +60,33 @@ var read_file = function(){
 }
 
 $(document).ready(function(){
-    load_grammar();
     $(".converter").hide();
     $(".download").hide();
     $(".export-options").hide();
-
+    
     $("#input").bind("input propertychange", function(){
         console.log("changed");
         compile();
     })
+    
     $("#file").change(function(){
         read_file();
     })
     $("#download").click(function(){
-        download($("#output").val(),"trackblaster.tab","text/plain")
+	      console.log("download");
+	      download($("#output").val(),"trackblaster.tab","text/plain")
     }); 
     $(".export").click(function(){
-        if($(this).hasClass("disabled")){
-            $(this).removeClass("disabled");
-            generator.set_export($(this).attr("field"),true);
-            update();
-        }
-        else{
-            $(this).addClass("disabled");
-            generator.set_export($(this).attr("field"),false);
-            update();
-        }
+	      if($(this).hasClass("disabled")){
+		        $(this).removeClass("disabled");
+		        generator.set_export($(this).attr("field"),true);
+		        update();
+	      }
+	      else{
+		        $(this).addClass("disabled");
+		        generator.set_export($(this).attr("field"),false);
+		        update();
+	      }
     });
 
 })

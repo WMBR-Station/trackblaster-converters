@@ -1,13 +1,14 @@
 
-M3U= m3uheader ENDL+ obj:stmts {return {tracks:obj}} /
-     m3uheader {return null}
+M3U= 
+  m3uheader ENDL+ obj:stmts {return {tracks:obj}} 
+  / m3uheader {return null}
 /* ---  Keywords -- */
 
-EXTM3U = "#EXTM3U" ws
-EXTINF = "#EXTINF"  ws
-DASH = "-" ws
-COMMA= "," ws
-COLON = ":" ws
+EXTM3U = "#EXTM3U" 
+EXTINF = "#EXTINF" 
+DASH =  ws "-" ws 
+COMMA= "," wsm
+COLON = ":" wsm
 ENDL "ENDL" =
     "\n" / "\r\n" / "\r"
 
@@ -42,31 +43,36 @@ char "char"
 
 escape = "\\"
 quot = '"'
-unescaped = [^\-#\0-\x1F\x22\x5C]
+unescaped = [^#\t ]
 
 DIGIT=[0-9]
 INTEGER = DIGIT*
-ws = [ \t]*
+ws = [ \t]+
+wsm = [ \t]*
 PATH =[^\n]*
 HEXDIG=[0-9a-f]
 
 integer "integer" = i:INTEGER {return parseInt(i.join(""))}
 
-words "words"= w:word {return w;}
+words "words"= 
+  w:word {return [w]}
+  / w:word ws ws:words  {return ws.append(w);}
 
-m3uheader "m3uheader" = EXTM3U {
+m3uheader "m3uheader" = EXTM3U  wsm {
        console.log("header")
        return {key:"header",value:"extm3u"};
    }
 
 track "track" =
-      EXTINF COLON duration:integer COMMA artist:words DASH title:words ENDL
-      filepath:PATH 
+      EXTINF COLON duration:integer COMMA artist:words DASH title:words wsm ENDL
+      filepath:PATH wsm
       {
+        var artist_name = artist.join(" ");
+        var title_name = title.join(" ");
         var data = {
             duration:duration,
-            artist:artist,
-            title:title,
+            artist:artist_name,
+            title:title_name,
             path:filepath.join("")
         };
         console.log("track",data);
@@ -77,17 +83,17 @@ stmts =
         head:track
         tail:(ENDL+ next:track {return next;})*
         {
-	  var tracks = [];
+	        var tracks = [];
           var data = [head].concat(tail);
           
-          var timeobj = new TimeCode();
-	  var start = 0;
-	  for(var i=0; i < data.length; i++){
+           var timeobj = new TimeCode();
+	         var start = 0;
+	         for(var i=0; i < data.length; i++){
                   var track = data[i].value;
                   track.start = timeobj.from_sec(start);
                   track.end = timeobj.from_sec(start + track.duration);
-		  tracks.push(track);
-		  start += track.duration;
+		              tracks.push(track);
+		             start += track.duration;
           } 
           return tracks;
         }

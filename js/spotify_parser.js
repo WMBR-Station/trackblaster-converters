@@ -5,7 +5,9 @@ var compile = function(){
     var src = $("#input").val().trim();
     $(".download").hide();;
     $(".export-options").hide();
+    $("#output").html("");
     $(".converter").show();
+
     parser.parse(src,function(ir){
         var result = generator.generate(ir);
         $("#output").val(result);

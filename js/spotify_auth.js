@@ -16,7 +16,6 @@ var SpotifyAuthWorkflow = function(){
             redirect_uri: this.redirect_uri,
         }
         var final_url = url + "?" + $.param(data);
-        return;
         window.location.replace(final_url);
         
     }

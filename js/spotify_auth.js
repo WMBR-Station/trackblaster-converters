@@ -1,6 +1,6 @@
 var SpotifyAuthWorkflow = function(){
     this.state = 0
-    this.redirect_uri = "http://curious-cube.csail.mit.edu:8000/spotify.html"
+    this.redirect_uri = window.location.href 
 
     this.client_id = CLIENT_ID
     this.client_secret = CLIENT_SECRET 

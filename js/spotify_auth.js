@@ -107,7 +107,7 @@ var SpotifyAuthWorkflow = function(){
             this.code = params.get('code');
             this.state = 1;
         }
-        else if(param.has("error")){
+        else if(params.has("error")){
             this.state = -1;
         }
         else if(localStorage.getItem("spotify_access_token") !== null){

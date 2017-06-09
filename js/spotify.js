@@ -4,7 +4,17 @@ var SpotifyParser = function(){
         this.albums = {};
 	      this.artists = {};
 	      this.order = [];
+        this.api = new SpotifyWebApi();
+        this.auth = new SpotifyAuthWorkflow();
+        var that = this;
+        this.auth.on_access_token(function(at){
+            that.auth.setAccessToken(at);
+            console.log("completed authorization process");
+        })
+        this.auth.authorize();
     }
+
+    
     this.init_album = function(album_id){
 	      if(album_id in this.albums && this.albums[album_id] != null){
 		        return;

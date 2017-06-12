@@ -6,9 +6,8 @@ var SpotifyParser = function(){
 	      this.order = [];
         var that = this;
         this.oauth = new SpotifyAuth();
-        this.api = new SpotifyWebApi();
         this.oauth.on_access_token(function(at){
-            that.api.setAccessToken(at);
+            console.log("READY");
         })
         this.oauth.authorize()
     }
@@ -28,11 +27,18 @@ var SpotifyParser = function(){
         this.albums[album_id] = null;
         var url = "https://api.spotify.com/v1/albums/"+album_id;
         var that = this
-        $.get(url,function(data){
-            console.log(data);
-            that.albums[album_id] = data;
-            if(cbk != undefined){
-                cbk();
+        this.oauth.ajax({
+            url:url,
+            method:"GET",
+            success:function(data){
+                console.log(data);
+                that.albums[album_id] = data;
+                if(cbk != undefined){
+                    cbk();
+                }
+            },
+            error:function(data){
+                console.log("failed to find album",album_id)
             }
         })
     }
@@ -50,18 +56,20 @@ var SpotifyParser = function(){
         this.artists[artist_id] = null;
         var url = "https://api.spotify.com/v1/artists/"+artist_id;
         var that = this
-        this.oauth.GET_USER(url,{},
-           function(data){
-               that.artists[artist_id] = data;
-               console.log(data);
-               if(cbk != undefined){
-                   cbk();
-               }
-           },
-           function(data){
-              console.log("failed to find artist ",artist_id)
-           }
-       )
+        this.oauth.ajax({
+            url:url,
+            method:"GET",
+            success: function(data){
+                that.artists[artist_id] = data;
+                console.log(data);
+                if(cbk != undefined){
+                    cbk();
+                }
+            },
+            error: function(data){
+                console.log("failed to find artist ",artist_id)
+            }
+        })
     }
     this.get_track = function(track_id,cbk){
         var url = "https://api.spotify.com/v1/tracks/"+track_id;
@@ -70,27 +78,31 @@ var SpotifyParser = function(){
             cbk();
             return;
         }
-        this.oauth.GET_USER(url,{},
-           function(data){
-              that.tracks[track_id] = data;
-              if(data.album != undefined){
-		              that.init_album(data.album.id); 
-	            }
-	            for(var i=0; i < data.artists.length; i++){
-		              //that.init_artist(data.artists[i].id);
-	            }
-	            if(data.album != undefined){
-		              that.get_album(data.album.id,cbk); 
-	            }
-	            for(var i=0; i < data.artists.length; i++){
+        this.oauth.ajax({
+            url:url,
+            method:"GET",
+            success: function(data){
+                console.log("data",data);
+                that.tracks[track_id] = data;
+                if(data.album != undefined){
+		                that.init_album(data.album.id); 
+	              }
+	              for(var i=0; i < data.artists.length; i++){
+		                //that.init_artist(data.artists[i].id);
+	              }
+	              if(data.album != undefined){
+		                that.get_album(data.album.id,cbk); 
+	              }
+	              for(var i=0; i < data.artists.length; i++){
 		              //that.get_artist(data.artists[i].id,cbk);
-	            }
-	            cbk();
-           },
-           function(data,err){
+	              }
+	              cbk();
+            },
+            error:function(data,err){
                console.log("failed to find track ",track_id)
                console.log(data,err)
-           })
+            }
+        })
         
     }
     this._is_done = function(els){

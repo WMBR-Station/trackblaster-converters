@@ -1,6 +1,6 @@
-var SpotifyAuthWorkflow = function(){
+var SpotifyAuth = function(){
     this.state = 0
-    this.redirect_uri = window.location.href 
+    this.redirect_uri = window.location.href.split("?")[0] 
 
     this.client_id = CLIENT_ID
     this.client_secret = CLIENT_SECRET 
@@ -20,9 +20,9 @@ var SpotifyAuthWorkflow = function(){
         
     }
 
-    this.get_header = function(){
+    this.get_authorization = function(){
         var payload = this.client_id + ":" + this.client_secret
-        return "Basic "+btoa(payload)
+        return 'Basic ' + window.btoa(unescape(encodeURIComponent(payload)))
     }
 
     this.get_access_token = function(){
@@ -30,26 +30,24 @@ var SpotifyAuthWorkflow = function(){
         var data = {
             grant_type: "authorization_code",
             code:this.code,
-            redirect_uri: this.redirect_url
+            redirect_uri: this.redirect_uri,
+            client_id: this.client_id,
+            client_secret: this.client_secret
         }
         var that = this;
         $.ajax({
             method:"POST",
-            url:url,
-            data:data,
-            beforeSend:function(request){
-                request.setRequestHeader("Authorization",that.get_header());
-                request.setRequestHeader("Access-Control-Allow-Origin","*");
+            url: url,
+            data: data,
+            dataType: "text",
+            header: {
+                'Accept': 'application/json, application/x-www-form-urlencoded',
+                'Content-Type': 'application/x-www-form-urlencoded'
             },
-            success:function(data){
-                console.log("successfully request access token")
-                that.store_access_token(data);
-                that.ready();
-            },
-            failure:function(){
-                console.log("failed to request authorization")
+            complete:function(r,data){
+                console.log(r,data);
             }
-       })
+        })
     }
     this.on_access_token = function(cbk){
         this.callbacks.push(cbk);
@@ -93,8 +91,9 @@ var SpotifyAuthWorkflow = function(){
                 that.update_access_token(data);
                 that.ready();
             },
-            failure:function(){
+            error:function(error){
                 console.log("failed to refresh token")
+                console.log(error);
             }
         })
         

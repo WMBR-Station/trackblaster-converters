@@ -4,14 +4,13 @@ var SpotifyParser = function(){
         this.albums = {};
 	      this.artists = {};
 	      this.order = [];
-        this.api = new SpotifyWebApi();
-        this.auth = new SpotifyAuthWorkflow();
         var that = this;
-        this.auth.on_access_token(function(at){
-            that.auth.setAccessToken(at);
-            console.log("completed authorization process");
+        this.oauth = new SpotifyAuth();
+        this.api = new SpotifyWebApi();
+        this.oauth.on_access_token(function(at){
+            that.api.setAccessToken(at);
         })
-        this.auth.authorize();
+        this.oauth.authorize()
     }
 
     
@@ -51,13 +50,18 @@ var SpotifyParser = function(){
         this.artists[artist_id] = null;
         var url = "https://api.spotify.com/v1/artists/"+artist_id;
         var that = this
-        $.get(url,function(data){
-            that.artists[artist_id] = data;
-            console.log(data);
-            if(cbk != undefined){
-                cbk();
-            }
-        })
+        this.oauth.GET_USER(url,{},
+           function(data){
+               that.artists[artist_id] = data;
+               console.log(data);
+               if(cbk != undefined){
+                   cbk();
+               }
+           },
+           function(data){
+              console.log("failed to find artist ",artist_id)
+           }
+       )
     }
     this.get_track = function(track_id,cbk){
         var url = "https://api.spotify.com/v1/tracks/"+track_id;
@@ -66,22 +70,28 @@ var SpotifyParser = function(){
             cbk();
             return;
         }
-        $.get(url,function(data){
-            that.tracks[track_id] = data;
-            if(data.album != undefined){
-		            that.init_album(data.album.id); 
-	          }
-	          for(var i=0; i < data.artists.length; i++){
-		            //that.init_artist(data.artists[i].id);
-	          }
-	          if(data.album != undefined){
-		            that.get_album(data.album.id,cbk); 
-	          }
-	          for(var i=0; i < data.artists.length; i++){
-		            //that.get_artist(data.artists[i].id,cbk);
-	          }
-	          cbk();
-        })
+        this.oauth.GET_USER(url,{},
+           function(data){
+              that.tracks[track_id] = data;
+              if(data.album != undefined){
+		              that.init_album(data.album.id); 
+	            }
+	            for(var i=0; i < data.artists.length; i++){
+		              //that.init_artist(data.artists[i].id);
+	            }
+	            if(data.album != undefined){
+		              that.get_album(data.album.id,cbk); 
+	            }
+	            for(var i=0; i < data.artists.length; i++){
+		              //that.get_artist(data.artists[i].id,cbk);
+	            }
+	            cbk();
+           },
+           function(data,err){
+               console.log("failed to find track ",track_id)
+               console.log(data,err)
+           })
+        
     }
     this._is_done = function(els){
         for(id in els){

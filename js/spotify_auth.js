@@ -32,6 +32,7 @@ var SpotifyAuth = function(){
         }
         else {
             console.log("access token expired");
+            this.request_authorization();
         }
     }
 
@@ -94,12 +95,13 @@ var SpotifyAuth = function(){
     }
     this.set_access_token = function(data){
         var expiration_time = new Date();
-        expiration_time.setSeconds(expiration_time.getSeconds() + data.expires_in)
+        var curr_seconds = expiration_time.getSeconds()
+        expiration_time.setSeconds(curr_seconds + data.expires_in)
         this.access_token = data.access_token;
         this.expiration_time = expiration_time;
 
         localStorage["spotify_access_token"] = this.access_token;
-        localStorage["spotify_expiration"] = JSON.stringify(this.expiration_time);
+        localStorage["spotify_expiration"] = this.expiration_time;
         
     }
     
@@ -111,7 +113,7 @@ var SpotifyAuth = function(){
         this.state = 0;
         if(params.has("access_token")){
             data.access_token = params.get('access_token');
-            data.expires_in = params.get('expires_in');
+            data.expires_in = parseInt(params.get('expires_in'));
             this.state = 1;
             return data;
         }
@@ -121,9 +123,9 @@ var SpotifyAuth = function(){
         else if(localStorage.getItem("spotify_access_token") !== null){
             var data = {} 
             data.access_token = localStorage.getItem("spotify_access_token");
-            data.expiration_time = new Date(JSON.parse(localStorage.getItem("spotify_expiration")));
+            data.expiration_time = Date.parse(localStorage.getItem("spotify_expiration"));
 
-            if(new Date() >= data.expires_in ){
+            if(new Date() >= data.expiration_time ){
                 this.state = 2;
                 return data;
             }

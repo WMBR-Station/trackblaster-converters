@@ -125,6 +125,7 @@ var SpotifyAuth = function(){
             data.access_token = localStorage.getItem("spotify_access_token");
             data.expiration_time = Date.parse(localStorage.getItem("spotify_expiration"));
             var curr_time = new Date()
+            console.log(curr_time,data.expiration_time)
             if(curr_time >= data.expiration_time ){
                 this.state = 2;
                 return data;

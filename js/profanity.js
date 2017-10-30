@@ -335,8 +335,13 @@ color_track = function(track,div){
 
 WORDCLOUD = null;
 
-update_lyrics = function(track_id,playlist){
+update_lyrics = function(track_id,playlist,lyrics){
     track = playlist[track_id];
+    track.lyrics = lyrics
+    bad_words = profanityAnalyzer.check(track.lyrics);
+    track.profanity = bad_words;
+    track.lyric_state = "complete"
+    entry = $("[trackid="+track_id+"]");
     color_track(track,entry);
     if($("#sidebar").attr('track-id') == track_id){
         update_sidebar(track_id,playlist);
@@ -350,7 +355,7 @@ update_sidebar = function(track_id,playlist){
     if(track.lyrics == undefined){
         $("#no-data").show();
         $("#data-exists").hide();
-        $("#no-data").attr('track-id',track_id);
+        $("#new-lyrics").attr('track-id',track_id);
         return;
     }
     else{
@@ -512,9 +517,7 @@ $(document).ready(function(){
 
     $("#new-lyrics").change(function(){
         var trackid = $(this).attr('track-id');
-        PLAYLIST[trackid].lyrics = $(this).val()
-        PLAYLIST[trackid].lyric_state = "complete"
-        update_lyrics(trackid,PLAYLIST)
+        update_lyrics(trackid,PLAYLIST,$(this).val())
     })
 
     if(playlist != undefined && playlist != null){

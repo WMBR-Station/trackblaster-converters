@@ -21,5 +21,7 @@ httpd = BaseHTTPServer.HTTPServer(('curious-cube.csail.mit.edu', 8000),
 #	certfile=cwd+'/cert.pem', server_side=True)
 
 print("=== Server ===")
+print('curious-cube.csail.mit.edu:%d' % PORT)
 httpd.serve_forever()
+
 

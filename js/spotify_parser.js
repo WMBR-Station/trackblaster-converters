@@ -16,13 +16,18 @@ var compile = function(){
     });
 }
 var update = function(){
-    	var start_time =get_start_time(); 
+  var start_time =get_start_time();
 	ir = parser.get_ir();
 	var result = generator.generate(ir,start_time);
 	$("#output").val(result);
 
 }
 
+var open_profanity_checker = function(data){
+  var base_url = "profanity.html?playlist="+btoa(data)
+  var win = window.open(base_url,"_blank")
+  win.focus()
+}
 $(document).ready(function(){
     $("#input").bind("input propertychange", function(){
         compile();
@@ -30,14 +35,17 @@ $(document).ready(function(){
     $("#input_convert").click(function(){
         compile();
     })
-    
+
     $(".download").hide();
     $(".export-options").hide();
-    
+
     $("#download").click(function(){
 	      download($("#output").val(),"trackblaster.tab","text/plain")
     });
 
+    $('#profanity').click(function(){
+       open_profanity_checker($("#output").val());
+    })
     $(".export").click(function(){
 	      if($(this).hasClass("disabled")){
 		        $(this).removeClass("disabled");

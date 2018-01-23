@@ -2,10 +2,15 @@ var SpotifyAuth = function(){
     this.state = 0
     this.redirect_uri = window.location.href.split("?")[0] 
 
+
+
+    this.spotify_page = "spotify.php"
     this.client_id = CLIENT_ID
     this.client_secret = CLIENT_SECRET 
     this.callbacks = [];
     console.log(this.redirect_uri)
+
+    
 
     this.request_authorization = function(){
         var url = "https://accounts.spotify.com/authorize"

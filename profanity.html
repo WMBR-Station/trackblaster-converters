@@ -8,9 +8,11 @@
   <script src="js-lib/download.js"></script>
   <script src="js-lib/fuzzyset.js"></script>
   <script src="js/data.js"></script>
+  <script src="js/mock_data.js"></script>
   <script src="js/profanity.js"></script>
 
   <link href="css/style.css" rel="stylesheet">
+    <link href="css/profanity-style.css" rel="stylesheet">
 </head>
 <body class="container">
 
@@ -28,21 +30,29 @@
     </div>
     <div class="panel-body row">
         <div id="sidebar" class="panel-body col-md-3">
+            <div id="track-song" class="track-field">XXX</div>
+            <div id="track-artist" class="track-field">XXX</div>
+            <div id="track-album" class="track-field">XXX</div>
+            <div id="track-label" class="track-field">XXX</div>
+            <div id="track-year" class="track-field">XXX</div>
             <div id="data-exists">
                 <div id="wordcloud" style="height:10%;width:100%">
                     <svg id="wordcloud-svg"></svg>
                 </div>
-                <div id="lyrics" style="overflow-y:scroll;height:85%;">
+                <div id="lyrics" class="lyrics-box steal-scroll">
                     LYRICS
                 </div>
+                <button id="incorrect-lyrics">Incorrect Lyrics</button>
             </div>
             <div id="no-data">
-                <div style="height:10%">
+                <div>
                     We could not find lyrics for this song. please copy the song lyrics below.
                 </div>
-                <textarea id="new-lyrics" style="height:90%;overflow-y:scroll;">
-
+                <button id="search-lyrics">Search for Lyrics</button>
+                <textarea id="new-lyrics" class="lyrics-input-box steal-scroll">
                 </textarea>
+                <button id="save-lyrics">Save Lyrics</button>
+
             </div>
         </div>
 

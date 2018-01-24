@@ -27,6 +27,33 @@
 .export-header {
     font-weight:bold;
 }
+.swatch {
+  text-align: center;
+  border-radius: 1em;
+  width:2em;
+}
+.swatch .verybad {
+  content: '!';
+  background-color: #9D2933;
+}
+.swatch .bad {
+  content: '!';
+  background-color: #F9690E;
+}
+.swatch .warn {
+  content: '!';
+  background-color: #E2B13C;
+}
+.swatch .ok {
+  background-color:#049372;
+}
+.swatch .loading {
+  background-color:#95A5A6;
+}
+.swatch .unknown {
+  content: '?';
+}
+
 .export {
 }
 .disabled {

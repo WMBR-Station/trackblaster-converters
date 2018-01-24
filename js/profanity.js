@@ -311,7 +311,7 @@ screen_track = function(trackid,playlist,cbk){
 
 color_track = function(track,div){
     score = 0;
-   
+
     for(i in track.profanity){
         word = track.profanity[i]
         score += 1.0 / word.severity
@@ -352,6 +352,11 @@ update_sidebar = function(track_id,playlist){
 
     $("#sidebar").attr('track-id',track_id)
 
+    $("#track-song",$("#sidebar")).html(track.song)
+    $("#track-artist",$("#sidebar")).html(track.artist)
+    $("#track-album",$("#sidebar")).html(track.album)
+    $("#track-label",$("#sidebar")).html(track.label)
+    $("#track-year",$("#sidebar")).html(track.year)
     if(track.lyrics == undefined){
         $("#no-data").show();
         $("#data-exists").hide();
@@ -423,7 +428,7 @@ render_profanity = function(playlist){
           });
           color_track(track,entry);
       }
-      
+
   }
 
 }
@@ -463,27 +468,32 @@ screen_playlist = function(playlist){
     })
 }
 
-//PLAYLIST = null
-
 populate_playlist_from_text = function(content){
     tracks = parse_playlist(content);
-    PLAYLIST = tracks;
-    display_playlist(PLAYLIST);
-    screen_playlist(PLAYLIST);
+    pl = tracks;
+    display_playlist(pl);
+    screen_playlist(pl);
+    return pl
 }
 
 populate_mock_playlist = function(content){
-    display_playlist(PLAYLIST);
-    render_profanity(PLAYLIST);
+    pl = MOCK_PLAYLIST
+    display_playlist(pl)
+    render_profanity(pl)
+    return pl
 
 }
-populate_playlist_from_file = function(content){
+populate_playlist_from_file = function(content,cbk){
     fr = new FileReader();
     fr.onload = function(){
-        populate_playlist_from_text(fr.result)
+        pl = populate_playlist_from_text(fr.result)
+        cbk(pl)
     }
     fr.readAsText(content)
+
 }
+
+DEBUG = true
 resize_sidebar = function(content){
     var window_height = $(window).height();
     var sidebar_width = $("#sidebar").width();
@@ -497,10 +507,31 @@ resize_sidebar = function(content){
     WORDCLOUD.size([canvas_w,canvas_h]).start()
 
 }
+
+open_lyrics_search = function(song,artist){
+    query = song + " " + artist + " lyrics"
+    url = "https://www.google.com/search?q="+encodeURIComponent(query)
+    window.open(url)
+
+}
+save_lyrics = function(track_id,lyrics,playlist){
+    playlist[track_id] = track
+
+    bad_words = profanityAnalyzer.check(lyrics);
+    track.lyrics = lyrics
+    track.profanity = bad_words;
+    track.lyric_state = 'local';
+
+    display_playlist(playlist);
+    render_profanity(playlist);
+
+    update_sidebar(track_id,playlist);
+    console.log("SAVING",lyrics)
+}
 $(document).ready(function(){
     var url = new URL(self.location);
-    var playlist = url.searchParams.get("playlist");
-
+    var playlist_args = url.searchParams.get("playlist");
+    var playlist = null
     //populate_mock_playlist("MOCK DATA");
 
     WORDCLOUD = d3.layout.cloud()
@@ -515,21 +546,42 @@ $(document).ready(function(){
     })
     resize_sidebar();
 
-    $("#new-lyrics").change(function(){
-        var trackid = $(this).attr('track-id');
-        update_lyrics(trackid,PLAYLIST,$(this).val())
+    $("#search-lyrics").click(function(){
+        song = $("#track-song", $("#sidebar")).html()
+        artist = $("#track-artist", $("#sidebar")).html()
+        open_lyrics_search(song,artist)
     })
 
-    if(playlist != undefined && playlist != null){
-        console.log(playlist)
-        populate_playlist_from_text(atob(playlist))
+    $("#save-lyrics").click(function(){
+        track_id = $("#sidebar").attr('track-id')
+        new_lyrics = $("#new-lyrics").val()
+        save_lyrics(track_id,new_lyrics,playlist)
+        $("#new-lyrics").val('')
+    })
+    $(".steal-scroll").off('mousewheel').on("mousewheel", function(event){
+        var height = $(this).height(),
+            scrollHeight = $(this).get(0).scrollHeight;
+        var blockScrolling = this.scrollTop === scrollHeight - height && event.deltaY < 0 || this.scrollTop === 0 && event.deltaY > 0;
+        return !blockScrolling
+    })
+
+
+    if(DEBUG){
+        playlist = populate_mock_playlist()
     }
+    else if(playlist_args != undefined && playlist_args != null){
+        console.log(playlist)
+        playlist = populate_playlist_from_text(atob(playlist))
+    }
+
 
     $("#file").change(function(){
         console.log($(this).val())
         if($(this).prop('files').length > 0){
             var f = $(this).prop('files')[0]
-            populate_playlist_from_file(f)
+            populate_playlist_from_file(f,function(pl){
+                playlist = pl
+            })
         }
     })
 })

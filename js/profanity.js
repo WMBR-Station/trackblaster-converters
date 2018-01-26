@@ -1,10 +1,28 @@
 
-var COLORS = (function(){
-    self.LIGHTRED = "#E57373"
-    self.LIGHTGREEN = "#66BB6A"
-    self.LIGHTYELLOW = "#FFD54F"
-    self.LIGHTORANGE = "#FF9800"
-    self.GREY = "grey"
+var STATUS = (function(){
+    self.VERYBAD = "verybad"
+    self.BAD = "bad"
+    self.WARN = "warn"
+    self.OK = "ok"
+    self.UNKNOWN= "unknown"
+    self.LOADING = "loading"
+    self.get_status = function(score){
+      if(score == undefined){
+        return self.UNKNOWN
+      }
+      if(score >= 0.7){
+        return self.VERYBAD
+      }
+      else if(score >= 0.5){
+        return self.BAD
+      }
+      else if(score > 0.3){
+        return self.WARN
+      }
+      else{
+        return self.OK
+      }
+    }
     return self;
 
 })()
@@ -105,9 +123,11 @@ var Match = function(word,bad_word,severity,category){
   }
   this.init(word,bad_word,severity,category)
 }
+
+
 var ProfanityAnalyzer = function(){
 
-  self.severity = {SEVERE:1,BAD:2,NOTGREAT:3}
+  self.severity = {SEVERE:1.0,BAD:0.69,NOTGREAT:0.29}
   self.corpus = {
     profane: {
         'fuck':self.severity.SEVERE,
@@ -181,55 +201,66 @@ var ProfanityAnalyzer = function(){
     return word.toLowerCase() == bad_word
 
   }
+  self.check_word = function(word){
+      for(bad_word in corpus.indecent){
+        if(self.match(word,bad_word)){
+          return new Match(word,bad_word,corpus.indecent[bad_word],'indecent')
+        }
+      }
+      for(bad_word in corpus.profane){
+          if(self.match(word,bad_word)){
+            return new Match(word,bad_word,corpus.profane[bad_word],'profane')
+          }
+      }
+      return undefined
+  }
   self.check = function(lyrics){
     words = lyrics.split(/\s+/)
     matches = [];
 
     for(idx in words){
       var word = words[idx];
-      for(bad_word in corpus.indecent){
-        if(self.match(word,bad_word)){
-          matches.push(new Match(word,bad_word,corpus.indecent[bad_word],'indecent'))
-        }
-      }
-      for(bad_word in corpus.profane){
-          if(self.match(word,bad_word)){
-            matches.push(new Match(word,bad_word,corpus.profane[bad_word],'profane'))
-          }
+      match = self.check_word(word)
+      if(match != undefined){
+        matches.push(match)
       }
     }
-    console.log(matches)
     return matches;
 
   };
-
+  self.format_word = function(word,fn){
+      for(bad_word in corpus.indecent){
+          if(self.match(word,bad_word)){
+            return fn(word,corpus.indecent[bad_word])
+          }
+      }
+      for(bad_word in corpus.profane){
+          if(self.match(word,bad_word)){
+            return fn(word,corpus.profane[bad_word])
+          }
+      }
+      return undefined
+  }
     self.format = function(lyrics,fn,delim){
         lines = lyrics.split(/\n/);
         for(line_id in lines){
             words = lines[line_id].split(/\s+/);
             for(word_id in words){
                 var word = words[word_id]
-                for(bad_word in corpus.indecent){
-                    if(self.match(word,bad_word)){
-                        words[word_id] = fn(word,corpus.indecent[bad_word]);
-                        console.log(words[word_id]);
-                    }
+                match = self.format_word(word,fn)
+                if(match != undefined){
+                  words[word_id] = match
                 }
-                for(bad_word in corpus.profane){
-                    if(self.match(word,bad_word)){
-                        words[word_id] = fn(word,corpus.profane[bad_word]);
-                        console.log(words[word_id]);
-                    }
-                }
-                lines[line_id] = words.join(' ')
+
             }
+            lines[line_id] = words.join(' ')
         }
         return lines.join(delim);
 
 
     };
 
-  return this;
+    return this;
 }
 
 var lyricEngine = LyricEngine()
@@ -316,20 +347,14 @@ color_track = function(track,div){
         word = track.profanity[i]
         score += 1.0 / word.severity
     }
-    color = COLORS.LIGHTGREEN
-    if(score >= 1.0){
-        color = COLORS.LIGHTRED
+    if(track.profanity != undefined){
+      color = STATUS.get_status(score)
     }
-    else if(score >= 0.5){
-        color = COLORS.LIGHTORANGE
+    else{
+      color = STATUS.get_status(undefined)
     }
-    else if(score >= 0.25){
-        color = COLORS.LIGHTYELLOW
-    }
-    if(track.profanity == undefined){
-        color = COLORS.GREY;
-    }
-    $(div).css('background-color',color);
+    $(div).removeClass("loading");
+    $(div).addClass(color);
 
 }
 
@@ -342,15 +367,54 @@ update_lyrics = function(track_id,playlist,lyrics){
     track.profanity = bad_words;
     track.lyric_state = "complete"
     entry = $("[trackid="+track_id+"]");
-    color_track(track,entry);
+    color_track(track,$(".swatch",entry));
     if($("#sidebar").attr('track-id') == track_id){
         update_sidebar(track_id,playlist);
     }
 }
+
+update_sidebar_lyrics = function(lyrics,lyrics_div){
+  var words = {}
+  var add_word = function(word,ws){
+    var key = word.toLowerCase()
+    if(! (key in words)){
+        words[key] = {count:0}
+    }
+    idx = words[key].count
+    words[key].count += 1
+    word_span.attr('word_idx',idx)
+    word_span.attr('word_key',key)
+  }
+  lyrics_div.empty()
+  lines = lyrics.split('\n')
+  for(lineno in lines){
+    line = lines[lineno]
+    words = line.split(' ')
+    line_div = $("<div/>")
+    for(wordno in words){
+        word = words[wordno]
+        word_span = $("<span/>").html(word).addClass('word')
+        result = profanityAnalyzer.check_word(word)
+        if(result != undefined){
+          add_word(word,word_span)
+          status = STATUS.get_status(result.severity)
+          word_span.addClass(status)
+          console.log(match)
+        }
+        line_div.append(word_span)
+    }
+    lyrics_div.append(line_div)
+    console.log(line)
+
+  }
+  $()
+}
 update_sidebar = function(track_id,playlist){
     track = playlist[track_id];
-
-    $("#sidebar").attr('track-id',track_id)
+    track_row = $("[trackid="+track_id+"]")
+    $(".track-entry").removeClass("selected")
+    track_row.addClass("selected")
+    $("#sidebar").attr('track-id',track_id).show()
 
     $("#track-song",$("#sidebar")).html(track.song)
     $("#track-artist",$("#sidebar")).html(track.artist)
@@ -369,49 +433,14 @@ update_sidebar = function(track_id,playlist){
     }
     var words = {};
 
-    $("#lyrics").html(profanityAnalyzer.format(track.lyrics,function(ucword,score){
-        word = ucword.toLowerCase()
-
-        if(!(word in words)){
-            words[word] = {text:word,size:12,color:"black"};
-        }
-        if(score == profanityAnalyzer.severity.SEVERE){
-            color = COLORS.LIGHTRED;
-            words[word].size += 6;
-        }
-        else if(score == profanityAnalyzer.severity.BAD){
-            color = COLORS.LIGHTORANGE;
-            words[word].size += 4;
-        }
-        else if(score == profanityAnalyzer.severity.NOTGREAT){
-            color = COLORS.LIGHTYELLOW;
-            words[word].size += 2;
-        }
-        return "<span style='background-color:"+color+"'>"+word+"</span>"
-    },'<br>'));
-
-    console.log(words)
-    var wordlist = $.map(words,function(v,k){return v;})
-    if(wordlist.length == 0){
-        hide_wordcloud();
-    }
-    else{
-        show_wordcloud();
-        WORDCLOUD.stop()
-            .words(wordlist)
-            .font("Impact")
-            .fontSize(function(d){return d.size;})
-            .rotate(0)
-            .on("end",draw_wordcloud)
-            .start();
-    }
-
+    update_sidebar_lyrics(track.lyrics,$("#lyrics"))
 }
 
 render_profanity = function(playlist){
   for(trackid in playlist){
       track = playlist[trackid];
-      entry = $("[trackid="+trackid+"]");
+      entry = $("[trackid="+trackid+"]")
+      swatch = $(".swatch",entry)
       if(track.lyric_state != undefined && track.lyric_state == "complete"){
           entry.click(function(){
               track_id = $(this).attr('trackid');
@@ -419,14 +448,14 @@ render_profanity = function(playlist){
 
           });
 
-          color_track(track,entry);
+          color_track(track,swatch);
       }
       else{
           entry.click(function(){
               track_id = $(this).attr('trackid');
               update_sidebar(track_id,playlist);
           });
-          color_track(track,entry);
+          color_track(track,swatch);
       }
 
   }
@@ -502,9 +531,6 @@ resize_sidebar = function(content){
 
     $("#sidebar").height(window_height - header_height - footer_height)
     $("#details").height(window_height - header_height - footer_height)
-    var canvas_h = $("#wordcloud").height()
-    var canvas_w = $("#wordcloud").width()
-    WORDCLOUD.size([canvas_w,canvas_h]).start()
 
 }
 
@@ -534,12 +560,9 @@ $(document).ready(function(){
     var playlist = null
     //populate_mock_playlist("MOCK DATA");
 
-    WORDCLOUD = d3.layout.cloud()
-        .on('end',draw_wordcloud)
-        .start();
 
     console.log(WORDCLOUD);
-    $("#wordcloud").append(WORDCLOUD);
+    $("#sidebar").hide()
 
     $(window).resize(function(){
         resize_sidebar();

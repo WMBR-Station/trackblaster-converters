@@ -2,7 +2,6 @@
 	<script   src="https://code.jquery.com/jquery-3.1.0.min.js"   integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s="   crossorigin="anonymous"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.11.0/d3.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.4/d3.layout.cloud.min.js"></script>
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
   <script src="js-lib/download.js"></script>
@@ -17,35 +16,36 @@
 <body class="container">
 
     <div class="panel-primary">
-    <div class="panel-heading">
+    <div class="panel-heading track-panel">
         <h2 class="row">Profanity Screening Tool</h2>
         <div class="row converter">
             Upload the trackblaster playlist file. The Profanity Screening Tool will scan the playlist
             for profanity.
         </div>
-        <div class="parameters row">
+        <div class="row">
             <div class="col-md-3">Trackblaster File:</div>
             <input class="col-md-5" id="file" type="file"></input>
         </div>
     </div>
     <div class="panel-body row">
         <div id="sidebar" class="panel-body col-md-3">
-            <div id="track-song" class="track-field">XXX</div>
-            <div id="track-artist" class="track-field">XXX</div>
-            <div id="track-album" class="track-field">XXX</div>
-            <div id="track-label" class="track-field">XXX</div>
-            <div id="track-year" class="track-field">XXX</div>
+						<div class='track-panel'>
+            <div id="track-song" class="track-field song">XXX</div>
+            <div id="track-artist" class="track-field artist">XXX</div>
+            <div id="track-album" class="track-field album">XXX</div>
+            <div id="track-label" class="track-field music-label">XXX</div>
+            <div id="track-year" class="track-field year">XXX</div>
+						</div>
             <div id="data-exists">
-                <div id="wordcloud" style="height:10%;width:100%">
-                    <svg id="wordcloud-svg"></svg>
-                </div>
-                <div id="lyrics" class="lyrics-box steal-scroll">
-                    LYRICS
-                </div>
+								<div class="track-field bad-word-nav">
+									<span class="template bad-word">bad word</span>
+								</div>
+
+                <div id="lyrics" class="lyrics-box track-field steal-scroll"></div>
                 <button id="incorrect-lyrics">Incorrect Lyrics</button>
             </div>
             <div id="no-data">
-                <div>
+                <div class='track-field'>
                     We could not find lyrics for this song. please copy the song lyrics below.
                 </div>
                 <button id="search-lyrics">Search for Lyrics</button>
@@ -60,12 +60,15 @@
 
             <div id="details">
                 <div class="header row">
+                <div class="col-md-1"></div>
                 <div class="col-md-3">Song</div>
                 <div class="col-md-3">Artist</div>
                 <div class="col-md-3">Album</div>
                 </div>
-                <div class="templ row hidden">
-									<div class="swatch loading"></div>
+                <div class="templ row hidden track-entry">
+									<div class="col-md-1">
+										<div class="swatch loading "></div>
+									</div>
                 	<div class="song col-md-3"> </div>
                 	<div class="artist col-md-3"> </div>
                 	<div class="album col-md-3"> </div>

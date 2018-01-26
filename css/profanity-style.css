@@ -14,7 +14,90 @@
 .steal-scroll {
 
 }
-
+.track-panel {
+  padding: 2em;
+  background-color:#2c3e50;
+}
 .track-field {
     width:100%;
+    text-align:center;
+    background-color:#2c3e50;
+    color: white;
+}
+.track-field.song {
+  font-size:1.5em;
+}
+.track-field.artist {
+  font-size:1.5em;
+  font-style:italic;
+  color: #ecf0f1;
+}
+.track-field.album {
+  color: #bdc3c7;
+}
+.track-field.year {
+  color: #bdc3c7;
+}
+.track-field.music-label {
+  color: #bdc3c7;
+}
+.track-field.bad-word-nav {
+  background-color: #34495e;
+}
+
+.track-entry {
+  height:3em;
+  vertical-align: center;
+}
+.track-entry.selected {
+  background-color:#F3C13A;
+  border-color:#F5AB35;
+  border-style:'1px';
+}
+.swatch {
+  text-align: center;
+  border-radius: 1em;
+  display: block;
+  min-width:2em;
+  min-height:2em;
+  width=2em;
+  height=2em;
+}
+
+.word {
+  padding-left: 0.1em;
+  padding-right: 0.1em;
+}
+
+.template {
+  display:none;
+}
+.verybad {
+  background-color: #9D2933;
+}
+.bad {
+  background-color: #F9690E;
+}
+.warn {
+  background-color: #E2B13C;
+}
+.ok {
+  background-color:#049372;
+}
+.swatch.unknown{
+  background-color:#8E44AD;
+  color:white;
+  content: '?';
+}
+
+.swatch.loading {
+    border: px solid #f3f3f3; /* Light grey */
+    border-top: 3px solid #3498db; /* Blue */
+    border-radius: 50%;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }

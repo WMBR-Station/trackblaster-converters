@@ -16,7 +16,7 @@ var STATUS = (function(){
       else if(score >= 0.5){
         return self.BAD
       }
-      else if(score > 0.3){
+      else if(score > 0.0){
         return self.WARN
       }
       else{
@@ -373,12 +373,34 @@ update_lyrics = function(track_id,playlist,lyrics){
     }
 }
 
+select_profanity = function(word){
+  selector = $(".profanity-selector")
+  idx = selector.attr('index')
+  cword = selector.attr('word')
+  profanity_box = $(".profanity-box")
+  lyrics_box = $(".lyrics-box")
+  this_count = $("[word_key='"+word+"']",profanity_box).attr('word_count')
+  if(cword == word){
+    idx = (idx + 1) % this_count
+  }
+  else{
+    idx = 0
+  }
+  selector.attr('word',cword).attr('index',idx)
+  this_span = $("[word_key='"+word+"'][word_idx='"+idx+"']",lyrics_box)
+  lyrics_box.scrollTop(0)
+  span_offset = this_span.offset().top
+  par_offset = lyrics_box.offset().top
+  offset = span_offset - par_offset
+  curr_scroll = lyrics_box.scrollTop()
+  lyrics_box.scrollTop(offset-10)
+}
 update_sidebar_lyrics = function(lyrics,lyrics_div){
   var words = {}
-  var add_word = function(word,ws){
+  var add_word = function(word,word_span,severity){
     var key = word.toLowerCase()
     if(! (key in words)){
-        words[key] = {count:0}
+        words[key] = {count:0,severity:severity}
     }
     idx = words[key].count
     words[key].count += 1
@@ -389,25 +411,36 @@ update_sidebar_lyrics = function(lyrics,lyrics_div){
   lines = lyrics.split('\n')
   for(lineno in lines){
     line = lines[lineno]
-    words = line.split(' ')
+    wordlist = line.split(' ')
     line_div = $("<div/>")
-    for(wordno in words){
-        word = words[wordno]
+    for(wordidx in wordlist){
+        word = wordlist[wordidx]
         word_span = $("<span/>").html(word).addClass('word')
         result = profanityAnalyzer.check_word(word)
         if(result != undefined){
-          add_word(word,word_span)
+          add_word(word,word_span,result.severity)
           status = STATUS.get_status(result.severity)
           word_span.addClass(status)
-          console.log(match)
         }
         line_div.append(word_span)
     }
     lyrics_div.append(line_div)
-    console.log(line)
+  }
+  $(".profanity-box").empty()
+  for(word in words){
+    nwords = words[word].count
+    severity = words[word].severity
+    new_word = $("<div/>").addClass('bad-word')
+    status = STATUS.get_status(severity)
+    new_word.html(word+" ("+(nwords)+")")
+    .attr('word_key',word).attr('word_count',nwords)
+    .addClass(status)
+    new_word.click((function(w){return function(){
+      select_profanity(w)
+    }})(word))
+    $(".profanity-box").append(new_word)
 
   }
-  $()
 }
 update_sidebar = function(track_id,playlist){
     track = playlist[track_id];
@@ -459,36 +492,6 @@ render_profanity = function(playlist){
       }
 
   }
-
-}
-
-hide_wordcloud = function(){
-    $("#wordcloud").hide();
-}
-show_wordcloud = function(){
-    $("#wordcloud").show();
-}
-draw_wordcloud = function(words){
-    console.log("DRAW",words)
-    var w = $("#wordcloud").width()
-    var h = $("#wordcloud").height()
-    d3.select("#wordcloud-svg").selectAll("*").remove();
-    d3.select("#wordcloud-svg")
-        .attr("width",w)
-        .attr("height",h)
-        .append("g")
-        .attr("transform","translate("+[w/2,h/2]+")")
-        .attr("id","wcl")
-        .selectAll("text")
-        .data(words)
-        .enter()
-        .append('text')
-        .style("font-size",function(d){return d.size + "pt";})
-        .style("fill",function(d,i){return d.color;})
-        .attr("transform",function(d){
-            return "translate("+[d.x,d.y]+")"
-        })
-        .text(function(d){return d.text;});
 
 }
 screen_playlist = function(playlist){
@@ -582,10 +585,7 @@ $(document).ready(function(){
         $("#new-lyrics").val('')
     })
     $(".steal-scroll").off('mousewheel').on("mousewheel", function(event){
-        var height = $(this).height(),
-            scrollHeight = $(this).get(0).scrollHeight;
-        var blockScrolling = this.scrollTop === scrollHeight - height && event.deltaY < 0 || this.scrollTop === 0 && event.deltaY > 0;
-        return !blockScrolling
+        return true
     })
 
 

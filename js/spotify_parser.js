@@ -24,7 +24,8 @@ var update = function(){
 }
 
 var open_profanity_checker = function(data){
-  var base_url = "profanity.html?playlist="+btoa(data)
+  var encode_data = encodeURIComponent(data)
+  var base_url = "profanity.html?playlist="+encode_data
   var win = window.open(base_url,"_blank")
   win.focus()
 }

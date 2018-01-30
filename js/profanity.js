@@ -197,18 +197,18 @@ var ProfanityAnalyzer = function(){
         'tit': self.severity.NOTGREAT,
       }
   }
-  self.match = function(word,bad_word){
+  self.match_word = function(word,bad_word){
     return word.toLowerCase() == bad_word
 
   }
   self.check_word = function(word){
       for(bad_word in corpus.indecent){
-        if(self.match(word,bad_word)){
+        if(self.match_word(word,bad_word)){
           return new Match(word,bad_word,corpus.indecent[bad_word],'indecent')
         }
       }
       for(bad_word in corpus.profane){
-          if(self.match(word,bad_word)){
+          if(self.match_word(word,bad_word)){
             return new Match(word,bad_word,corpus.profane[bad_word],'profane')
           }
       }
@@ -230,12 +230,12 @@ var ProfanityAnalyzer = function(){
   };
   self.format_word = function(word,fn){
       for(bad_word in corpus.indecent){
-          if(self.match(word,bad_word)){
+          if(self.match_word(word,bad_word)){
             return fn(word,corpus.indecent[bad_word])
           }
       }
       for(bad_word in corpus.profane){
-          if(self.match(word,bad_word)){
+          if(self.match_word(word,bad_word)){
             return fn(word,corpus.profane[bad_word])
           }
       }
@@ -291,13 +291,14 @@ parse_playlist = function(content){
 }
 
 display_playlist = function(playlist){
-  var parent = $("#details")
-  var templ = $('.templ',parent)
+  var parent = $(".track-box")
+  var templ = $('.templ',$("#details"))
 
   for(trackid in playlist){
     var track = playlist[trackid]
     console.log(track)
-    var track_el = templ.clone().removeClass('templ hidden').attr('trackid',trackid)
+    var track_el = templ.clone()
+    .removeClass('templ hidden').attr('trackid',trackid)
     $('.artist',track_el).html(track.artist)
     $('.song',track_el).html(track.song)
     $('.album',track_el).html(track.album)
@@ -306,10 +307,10 @@ display_playlist = function(playlist){
 
 }
 
-screen_track = function(trackid,playlist,cbk){
+screen_track = function(trackid,playlist,track_cbk,done_cbk){
   if(playlist.length <= trackid){
-    console.log('Render..')
-    cbk()
+    console.log('<DONE>')
+    done_cbk();
     return;
   }
   console.log('-> Track '+(trackid));
@@ -317,42 +318,40 @@ screen_track = function(trackid,playlist,cbk){
   lyricEngine.get_lyrics(track.song,track.artist,track.album, function(lyricobj,error){
       if(lyricobj != null && lyricobj != undefined){
           track.genius = lyricobj;
-          console.log(track);
           if(track.genius.lyrics != null && track.genius.lyrics != undefined ){
               bad_words = profanityAnalyzer.check(track.genius.lyrics);
               track.profanity = bad_words;
               track.lyric_state = track.genius.lyrics_state;
               track.lyrics = track.genius.lyrics;
-              cbk()
           }
           else{
-              track.profanity = [];
+              track.profanity = undefined;
               track.lyric_state = "unknown"
               track.lyrics = null;
-
           }
       }
       else{
         console.log("ERROR",error)
       }
-      screen_track(trackid+1,playlist,cbk)
+      track_cbk(trackid)
+      screen_track(trackid+1,playlist,track_cbk,done_cbk)
 
   })
 }
 
 color_track = function(track,div){
-    score = 0;
-
-    for(i in track.profanity){
+    if(track.profanity != undefined){
+      score = 0;
+      for(i in track.profanity){
         word = track.profanity[i]
         score += 1.0 / word.severity
-    }
-    if(track.profanity != undefined){
+      }
       color = STATUS.get_status(score)
     }
     else{
       color = STATUS.get_status(undefined)
     }
+    console.log(track,color)
     $(div).removeClass("loading");
     $(div).addClass(color);
 
@@ -469,35 +468,31 @@ update_sidebar = function(track_id,playlist){
     update_sidebar_lyrics(track.lyrics,$("#lyrics"))
 }
 
+render_profanity_track = function(playlist,trackid){
+    track = playlist[trackid];
+    entry = $("[trackid="+trackid+"]")
+    swatch = $(".swatch",entry)
+    entry.click((function(tid){
+      return function(){
+        update_sidebar(tid,playlist);
+      }
+    })(trackid));
+
+    color_track(track,swatch);
+}
 render_profanity = function(playlist){
   for(trackid in playlist){
-      track = playlist[trackid];
-      entry = $("[trackid="+trackid+"]")
-      swatch = $(".swatch",entry)
-      if(track.lyric_state != undefined && track.lyric_state == "complete"){
-          entry.click(function(){
-              track_id = $(this).attr('trackid');
-              update_sidebar(track_id,playlist);
-
-          });
-
-          color_track(track,swatch);
-      }
-      else{
-          entry.click(function(){
-              track_id = $(this).attr('trackid');
-              update_sidebar(track_id,playlist);
-          });
-          color_track(track,swatch);
-      }
-
+    render_profanity_track(trackid)
   }
-
 }
 screen_playlist = function(playlist){
-    screen_track(0,playlist,function(){
-      render_profanity(playlist);
-    })
+    screen_track(0,playlist,
+      function(tid){
+        render_profanity_track(playlist,tid)
+      },
+      function(){
+      }
+    )
 }
 
 populate_playlist_from_text = function(content){
@@ -550,7 +545,7 @@ save_lyrics = function(track_id,lyrics,playlist){
     track.lyrics = lyrics
     track.profanity = bad_words;
     track.lyric_state = 'local';
-
+    $(".track-box").empty();
     display_playlist(playlist);
     render_profanity(playlist);
 
@@ -595,7 +590,8 @@ $(document).ready(function(){
     else if(playlist_args != undefined && playlist_args != null){
 	console.log("PLAYLIST")
         console.log(playlist_args)
-        playlist = populate_playlist_from_text(atob(playlist_args))
+        playlist_data = decodeURIComponent(playlist_args)
+        playlist = populate_playlist_from_text(playlist_data)
     }
 
 

@@ -90,18 +90,15 @@
 }
 .swatch.unknown{
   background-color:#8E44AD;
-  color:white;
-  content: '?';
 }
 
 .swatch.loading {
-    border: px solid #f3f3f3; /* Light grey */
-    border-top: 3px solid #3498db; /* Blue */
-    border-radius: 50%;
-    animation: spin 2s linear infinite;
+    animation: pulse 2s linear infinite;
+    background-color:#8E44AD;
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+@keyframes pulse {
+    0% {opacity:1.0}
+    50% {opacity:0.0}
+    100% {opacity:1.0}
 }

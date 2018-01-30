@@ -525,7 +525,7 @@ populate_playlist_from_file = function(content,cbk){
 
 }
 
-DEBUG = true
+DEBUG = false
 resize_sidebar = function(content){
     var window_height = $(window).height();
     var sidebar_width = $("#sidebar").width();
@@ -593,8 +593,9 @@ $(document).ready(function(){
         playlist = populate_mock_playlist()
     }
     else if(playlist_args != undefined && playlist_args != null){
-        console.log(playlist)
-        playlist = populate_playlist_from_text(atob(playlist))
+	console.log("PLAYLIST")
+        console.log(playlist_args)
+        playlist = populate_playlist_from_text(atob(playlist_args))
     }
 
 

@@ -7,14 +7,12 @@ Below are import instructions.
 Navigate to CUE File Import Tool
 	
 	people.csail.mit.edu/sachour/wmbr/conv/cue.html
-	
-**Selecting Starting Time**: Select the starting time of your show. 
 
 **Selecting Cue File**: You can pass your CUE file into the tool using one
 of the following two methods.
 
 1. select your cue file using the file chooser
-2.  copy the contents of the cue file into the text box, where it says `paste your cue file here`
+2. copy the contents of the cue file into the text box, where it says `paste your cue file here`
 
 **Converting your CUE File**: The tool will automatically convert your cue file to a trackblaster playlist. The trackblaster playlist will appear in the box that says `the trackblaster version of your cue file will appear here`.
 
@@ -22,7 +20,9 @@ of the following two methods.
  
  - If the file failed to convert, there will be no text where the trackblaster playlist should appear and an error message will appear below the text box. If this occurs, please email me (sachour AT mit DOT edu) the file.
  
- **Downloading your TAB file**: To download the trackblaster playlist, click `Download Trackblaster Playlist`. The playlist will be saved as `trackblaster.tab`
+ **Downloading your TAB file**: To download the trackblaster playlist, click `Download Trackblaster Playlist`. The playlist will be saved as `trackblaster.tab`. 
+ 
+ - You may choose to exclude the song title/artist/album/label/year from the tab file by clicking on on of the `Song`, `Album`, `Artist`, `Year` and `Label` fields in the `Export Options` row. The importer greys out fields that will be excluded in the `.tab` file. 
 
 ### Spotify Importer
 
@@ -30,11 +30,16 @@ Navigate to Spotify File Import Tool
 	
 	people.csail.mit.edu/sachour/wmbr/conv/spotify.html
 	
-Documentation Coming Soon...
+** Selecting a Spotify Playlist **: You can import a list of Spotify songs by selecting the tracks in Spotify and copy-pasting them into the text field that says `copy-paste tracks from spotify`.
 
-### Known Issues
+**Converting the Spotify Playlist**: The tool will automatically convert your spotify track list into a trackblaster playlist. The trackblaster playlist will appear in the box that says `trackblaster playlist will appear here`.
 
-Unicode characters are not handled properly yet.
+ - The importer may ask for permission to connect TrackblasterConverter to your Spotify account. The Spotify importer only uses your account to request artist/song/album information for each track in the playlist, and does not access any personal account data.
+ 
+**Downloading your TAB file**: To download the trackblaster playlist, click `Download Trackblaster Playlist`. The playlist will be saved as `trackblaster.tab`. 
+
+ - You may choose to exclude the song title/artist/album/label/year from the tab file by clicking on on of the `Song`, `Album`, `Artist`, `Year` and `Label` fields in the `Export Options` row. The importer greys out fields that will be excluded in the `.tab` file. 
+
 
 ### Importing your TAB file to Trackblaster
 
@@ -44,13 +49,13 @@ Navigate to trackblaster.
 	
 In order to import the data, you need to have one of your playlists open:
 
- - **Creating a New Playlist**: Create a new playlist (`DJs Only` -> `New Playlist`) for your show if you haven't already, and click `Add` to create the playlist with the information entered then click on `ENTER SONGS NOW`.
+ - **Creating a New Playlist**: Create a new playlist (`DJs Only` &rarr; `New Playlist`) for your show if you haven't already, and click `Add` to create the playlist with the information entered then click on `ENTER SONGS NOW`.
 
  - **Editing an Existing Playlist**: Select an existing playlist and click the edit icon to edit it.
 
 #### Uploading the Data
 
-Select `DJs Only` -> `Upload Data` and select the `playlist.tab` file and click `Upload`.
+Select `DJs Only` &rarr; `Upload Data` and select the `playlist.tab` file and click `Upload`.
 
 **Mapping The Fields**: Set the following mappings in the `Map your fields to Track-Blaster's page`
 
@@ -60,3 +65,9 @@ Select `DJs Only` -> `Upload Data` and select the `playlist.tab` file and click 
  - `Song` to `Song Title` and 
 
 Click the `Map` button when finished. You will now see a preview of your playlist. If you like what you see, press `Confirm`.
+
+
+### Known Issues
+
+There are no issues we are aware of at the moment. Please e-mail `tech@wmbr.org` to provide feedback.
+

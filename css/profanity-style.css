@@ -43,6 +43,7 @@ button {
     color: white;
 }
 
+
 .meta-label {
     color: #bdc3c7;
     padding-right:0.5em;
@@ -93,6 +94,10 @@ button {
     background-color:white;
     width: 100%;
     height: 100%;
+}
+#details {
+    width: 100%;
+    height: 100%;
     overflow-y: scroll;
     overflow-x: hide;
 }
@@ -105,6 +110,11 @@ button {
   border-color:#F5AB35;
   border-style:'1px';
 }
+.track-header {
+    background-color:black;
+    color:white;
+    text-align: center;
+}
 .track-field {
     text-align: center;
 }
@@ -113,6 +123,17 @@ button {
 {
     width: 6px;
     background-color: transparent;
+}
+.button {
+    background-color:#bdc3c7;
+    color:black;
+    border-radius: 2px;
+    padding-left:1em;
+    padding-right:1em;
+}
+.button:hover {
+    background-color:#d35400;
+    border-style:2px solid;
 }
 .word {
     padding-left: 0.1em;
@@ -135,7 +156,12 @@ button {
     background-color:#049372;
 }
 
-
+.bad.status {
+    background-color: #9D2933;
+}
+.ok.status {
+    background-color:#049372;
+}
 .swatch {
     text-align: center;
     border-radius: 0.1em;

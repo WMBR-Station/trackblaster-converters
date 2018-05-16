@@ -42,6 +42,7 @@ TrackMetadataView = function(trackdata){
         this.views.profanity = $(".profanity",this.views.root)
         this.views.album = $(".album",this.views.root)
         this.views.label = $(".music-label",this.views.root)
+        this.views.url = $(".url",this.views.root)
         this.views.year = $(".year",this.views.root)
 
         this.views.edit_lyrics = $('#edit-lyrics',this.views.root)
@@ -75,10 +76,33 @@ TrackMetadataView = function(trackdata){
             that.views.profanity.html(name)
         })
         this.model.listen('status',function(name){
-            that.views.status.html(name)
+            that.views.status.removeClass("ok bad")
+            if(name == "found"){
+                that.views.status.addClass("ok")
+            }
+            else if(name == "standby"){
+                that.views.status.html("no lyrics")
+                    .addClass("bad")
+            }
+            else if(name == "incorrect"){
+                that.views.status.html("incorrect lyrics")
+                    .addClass("bad")
+            }
+            else{
+                throw ("unknown status :"+name)
+            }
+            
         })
         this.model.listen('source',function(name){
-            that.views.source.html(name)
+            if(name == "web"){
+                that.views.status.html("lyrics found online")
+                that.views.url.attr('href',track.url)
+            }
+            else if(name == "local"){
+                that.views.status.html("lyrics uploaded by user")
+            }
+            else if(name == "none"){
+            }
         })
         this.model.listen('album',function(name){
             that.views.album.html(name)

@@ -64,38 +64,42 @@
                         <div class="col-md-1"><image src="" id="art"></image></div>
                         <div class="container col-md-10">
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <span class="meta-label">song:</span>
                                     <span class="meta-field song">XXX</span>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-5">
                                     <span class="meta-label">artist:</span>
                                     <span class="meta-field artist">XXX</span>
                                 </div>
-                                <div class="col-md-4">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
                                     <span class="meta-label">album:</span>
                                     <span class="meta-field album">XXX</span>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-5">
                                    <span class="meta-label">label:</span>
                                    <span class="meta-field music-label">XXX</span>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-1">
                                    <span class="meta-label">year:</span>
                                    <span class="meta-field year">XXX</span>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-1 meta-field status">XXX</div>
-                                <div class="col-md-1 meta-field source">XXX</div>
-                                <div class="col-md-3 meta-field button"
-                                    id="edit-lyrics">Edit Lyrics</div>
-                                <div class="col-md-3 meta-field button"
-                                    id="search-lyrics">Search Lyrics</div>
-                                <div class="col-md-4 profanity">XXX</div>
-                                
+                                <div class="col-md-4 meta-field status">
+                                    <span class="status"></span>
+                                </div>
+                                <div class="col-md-2 meta-field">
+                                    <button id="edit-lyrics">
+                                          Edit Lyrics</button>
+                                </div>
+                                <div class="col-md-3 meta-field">
+                                    <button id="search-lyrics">
+                                          Search Lyrics</button>
+                                </div>
+                                <div class="col-md-3 profanity">XXX</div>
                             </div>
                         </div>
                     </div>
@@ -106,30 +110,32 @@
         <div id="sidebar-container" "class="panel-body">
             <div id="sidebar" class="hide">
                 <div class="sidebar-header">
-                    <h3 class="color-bar">Lyrics</h3>
+                    <h3><span class="color-bar">&nbsp;&nbsp;</span>&nbsp;Lyrics</h3>
                 </div>
                 <div class="profanity-selector" ></div>
                 <div class="lyrics-box track-field steal-scroll"></div>
             </div>
 
             <div id="tracklist">
-                <div id="details">
+                <div>
                     <div class="header row">
-                    <div class="col-md-1"></div>
-                    <div class="col-md-3">Song</div>
-                    <div class="col-md-3">Artist</div>
-                    <div class="col-md-3">Album</div>
-                    <div class="templ row hidden track">
-                        <div class="col-md-1">
-                            <div class="swatch loading "></div>
+                        <div class="track-header col-md-1"></div>
+                        <div class="track-header col-md-3">Song</div>
+                        <div class="track-header col-md-3">Artist</div>
+                        <div class="track-header col-md-3">Album</div>
+                    </div>
+                    <div id="details">
+                        <div class="templ row hidden track">
+                            <div class="col-md-1">
+                                <div class="swatch loading "></div>
+                            </div>
+                            <div class="track-field song col-md-3"> </div>
+                            <div class="track-field artist col-md-3"> </div>
+                            <div class="track-field album col-md-3"> </div>
                         </div>
-                        <div class="track-field song col-md-3"> </div>
-                        <div class="track-field artist col-md-3"> </div>
-                        <div class="track-field album col-md-3"> </div>
-                    </div>
-                    </div>
                     <div class="track-box">
 
+                    </div>
                     </div>
                 </div>
             </div>

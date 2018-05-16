@@ -131,6 +131,7 @@ LyricsSidebarView = function(root){
         this.views.root = $(root)
         this.views.lyrics = $('.lyrics-box',this.views.root)
         this.views.profanity = $('.profanity-box',this.views.root)
+        this.views.profanity_templ = $('.templ',this.views.profanity)
         this.views.colorbar = $('.color-bar',this.views.root)
         this._cache = {}
         return
@@ -156,7 +157,7 @@ LyricsSidebarView = function(root){
                 for(wid in lyrics[lid]){
                     if(lid in pos && wid in pos[lid]){
                         badword = pos[lid][wid]
-                        text = $('<span/>').attr('id',lid+"."+wid)
+                        text = $('<span/>').attr('id',lid+"-"+wid)
                             .addClass(badword.severity)
                             .addClass('word')
                             .html(lyrics[lid][wid]).prop('outerHTML')
@@ -176,7 +177,54 @@ LyricsSidebarView = function(root){
             this.views.lyrics.html(this._cache[key])
         }
     }
+
+    this._jump_next_profanity = function(htmlobj){
+        word = $(".word",$(htmlobj)).attr('word')
+        locs = this.model.locs(word)
+        idx = parseInt($(".locs",$(htmlobj)).attr('idx'))
+
+        $(".locs",this.views.profanity).addClass('hidden')
+        if(idx + 1 < locs.length){
+            next_idx = idx+1
+        }
+        else{
+            next_idx = 0
+        }
+        console.log(idx,next_idx)
+        loc = locs[next_idx]
+        $(".locs",$(htmlobj)).removeClass('hidden')
+            .html((next_idx+1)+"/").attr('idx',next_idx)
+
+        wordid = "#"+loc[0]+"-"+loc[1]
+        offset = $(wordid).position().top + this.views.lyrics.scrollTop()
+        tocenter =  $(wordid).height()/2 - this.views.lyrics.height()/2
+        console.log(next_idx,wordid,offset+tocenter)
+        this.views.lyrics.scrollTop(offset+tocenter);
+    }
+
+
+    this._render_profanity_word = function(word,data,locs){
+        view = this.views.profanity_templ.clone().removeClass('hidden')
+        severity = data.severity
+        view.addClass(severity)
+        $(".word",view).html(word).attr('word',word)
+        $(".len",view).html(locs.length)
+        $(".locs",view).addClass('hidden')
+            .attr('idx',-1)
+        var that = this
+        view.click(function(){
+            that._jump_next_profanity(this)
+        })
+        return view
+    }
     this._render_profanity = function(profanity){
+        this.views.profanity.html("")
+        for(word in profanity){
+            newv = this._render_profanity_word(word,
+                                               profanity[word].data,
+                                               profanity[word].locs)
+            this.views.profanity.append(newv)
+        }
         console.log(profanity)
     }
     this.show = function(){

@@ -69,7 +69,7 @@ var TrackModel = function(song,artist,album,label,year){
         this.album = album
         this.label = label
         this.year = year
-        this.profanity = []
+        this.profanity = {}
         this.severity = null
         this.lyrics = null
         this.source = Globals.SOURCE.NONE
@@ -85,6 +85,7 @@ var TrackModel = function(song,artist,album,label,year){
 
 
     }
+    
     this.copyFrom = function(obj){
         this.song = obj.song
         this.artist = obj.artist
@@ -146,6 +147,10 @@ var TrackModel = function(song,artist,album,label,year){
         self.art = art
         this._obs.trigger('art',this.art)
     }
+    this.locs = function(word){
+        return this.profanity[word].locs
+    }
+
     this._build_lyrics = function(text){
         lines = text.split(/\n/)
         lyrics = []

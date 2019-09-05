@@ -38,7 +38,7 @@ I wanna cut to the feeling, oh yeah
 
 [Verse 2]
 Cancel your reservations
-No more hesitations, this is on
+No more fucking hesitations, this is on
 (Can't make it stop, give me all you got)
 I want it all or nothing
 No more in-between, now give your
@@ -51,7 +51,7 @@ A-a-ahhh!
 
 [Chorus]
 I wanna cut through the clouds, break the ceiling
-I wanna dance on the roof, you and me alone
+I wanna dance in hell, you and me alone
 I wanna cut to the feeling, oh yeah
 I wanna cut to the feeling, oh yeah
 I wanna play where you play with the angels
@@ -63,7 +63,7 @@ I wanna cut to the feeling, oh yeah
 Take me to emotion, I want to go all the way
 Show me devotion and take me all the way
 Take me to emotion, I want to go all the way
-Show me devotion and take me all the way
+Show me devotion slut and take me all the way
 All the way, all the way, all the way
 Take me all the way, a-a-ahhh!
 

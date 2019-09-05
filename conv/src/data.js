@@ -1,4 +1,10 @@
 
+var LyricStatus = {
+    UPLOADED: "uploaded",
+    UNAVAILABLE: "unavailable",
+    VALIDATED: "validated",
+    SCANNED: "scanned"
+}
 var Status = {
         SUCCESS: "success",
         FAILURE: "failed",
@@ -23,10 +29,20 @@ class GeniusLyrics extends Downloadable {
         this.track = track;
     }
     unpack(data){
-        console.log(data);
+        var lines = data.split("\n");
+        var that = this;
+        this.track.lyrics.clear();
+        lines.forEach(function(line,idx){
+            that.track.lyrics.add_line(line);
+        });
+        this.track.status = LyricStatus.UPLOADED;
     }
     request(cbk){
         var that = this;
+        if(this.lyric_path == null){
+            this.track.set_lyrics(null);
+            return;
+        }
         this.genius_lyric_api.get({
             lyric_path:this.lyric_path,
             success:function(data){
@@ -157,21 +173,45 @@ class SpotifyLink extends Downloadable {
             url: url,
             method: "GET",
             success: function(data){
-                that.unpack(data)
-                cbk(Status.SUCCESS)
+                that.unpack(data);
+                cbk(Status.SUCCESS);
             },
             error: function(err){
-                console.log(err)
-                cbk(Status.FAILURE)
+                console.log(err);
+                cbk(Status.FAILURE);
             }
         });
     }
 }
-class Lyrics extends Downloadable {
+class Lyrics {
     constructor(){
-        super()
-        this.lyrics = []
+        this.lyrics = [];
+        this.annotations = {};
+        this.status = LyricStatus.UNAVAILABLE;
     }
+    clear(){
+        this.lyrics = [];
+        this.annotations = {};
+        this.status = LyricStatus.UNAVAILABLE;
+    }
+    annotate(line_no,token_no,annot){
+        this.annotations[(line_no,token_no)] = annot;
+    }
+    *tokens(){
+        for(var i=0; i < this.lyrics.length; i += 1){
+            var line = this.lyrics[i];
+            for(var j=0; j < line.length; j += 1){
+                var tok = line[j];
+                yield [i,j,tok];
+            }
+        }
+    }
+    add_line(line){
+        var tokens = line.trim().split(/\s+/);
+        var word_tokens = tokens.filter(v=>v!='');
+        this.lyrics.push(word_tokens);
+    }
+
 }
 class Track {
     constructor(title,artists,album,year){
@@ -179,37 +219,41 @@ class Track {
         this.artists = artists;
         this.album = album;
         this.year = year;
-        this.lyrics = null;
+        this.lyrics = new Lyrics();
         this.spotify_uri = null;
+    }
+
+    set_lyrics(lyrics){
+        this.lyrics = lyrics;
     }
 }
 
 
 class WorkQueue {
     constructor(){
-        this.queue = []
+        this.queue = [];
     }
     add(dlobj){
-        this.queue.push(dlobj)
+        this.queue.push(dlobj);
     }
     next(){
         if(this.queue.length == 0){
             if(this.callback){
-                this.callback()
-                this.callback = null
+                this.callback();
+                this.callback = null;
             }
-            return
+            return;
         }
-        var dlobj = this.queue.pop()
-        var that = this
-        dlobj.status = Status.INPROGRESS
+        var dlobj = this.queue.pop();
+        var that = this;
+        dlobj.status = Status.INPROGRESS;
         dlobj.request(function(status){
             dlobj.status = status;
-            that.next()
-        })
+            that.next();
+        });
     }
     done(){
-        return this.queue.length
+        return this.queue.length;
     }
     wait(){
         while(!done){
@@ -217,11 +261,11 @@ class WorkQueue {
         }
     }
     execute(cbk){
-        this.callback = cbk
-        this.next()
+        this.callback = cbk;
+        this.next();
     }
     flush(){
-        this.queue = []
+        this.queue = [];
     }
 }
 

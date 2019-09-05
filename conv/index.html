@@ -3,6 +3,7 @@
 
 <script src="src/tokens.js"></script>
 <script src="src/util.js"></script>
+<script src="src/profanity_detector.js"></script>
 <script src="src/mock.js"></script>
 <script src="src/genius_api.js"></script>
 <script src="src/spotify_api.js"></script>
@@ -25,10 +26,11 @@
  q.execute()
 
  var api = new MockGeniusLyricAPI();
- var lyric = new GeniusLyrics(api, song1,id1.lyric_path);
+ var lyric = new GeniusLyrics(api, track1,id1.lyric_path);
  q.add(lyric);
  q.execute();
 
+ scan_for_profanity(track1.lyrics);
 </script>
 </head>
 <body>

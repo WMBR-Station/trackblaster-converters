@@ -77,5 +77,18 @@ class Playlist {
         this.tracks.push(track);
         this.n += 1;
     }
+    export(){
+        var str = "";
+        var delim = "\t";
+        var endl = "\n";
+        var header = ["Hidden","Break","Artist","ArtistLink","Composer","Song","Version","Album","Format","Label","LabelLink","Year","Misc","New","Comp","Comment"];
 
+        str += header.join(delim)+endl;
+        for(var i=0; i < this.tracks.length; i++){
+            var track = this.tracks[i]
+            var vals = ["0","0",track.artists,"","",track.title,"",track.album,"","","",track.year,"","",0,""]
+            str += vals.join(delim)+endl;
+        }
+        return str;
+    }
 }

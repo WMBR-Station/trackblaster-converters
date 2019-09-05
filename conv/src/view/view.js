@@ -37,7 +37,7 @@ class ModelView {
         this.model.unwatch(name);
     }
     bind(name){
-        this.model.watch(name, function(){m.redraw();});
+        this.model.watch(name, function(p,o,n){m.redraw();return n;});
     }
 }
 

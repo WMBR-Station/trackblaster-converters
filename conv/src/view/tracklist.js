@@ -1,20 +1,25 @@
 class LyricsStatusIndicator extends ModelView {
-    constructor(model,viewport){
+    constructor(model,track,viewport){
         super(model);
+        this.track = track;
         this.bind("status");
         this.viewport = viewport;
     }
-    view(arg){
-        var model = arg.model;
+    view(that){
         var rows= [
-            m("td", {class:"lyrics"}, model.status)
+            m("td", {class:"lyrics"}, that.model.status)
         ];
-        if(model.status != LyricStatus.UNAVAILABLE){
-            rows.push(m("td", {class:"view-lyrics"}, "view lyrics"));
+        var text = "view lyrics";
+        if(that.model.status == LyricStatus.UNAVAILABLE){
+            var text = "upload lyrics";
         }
-        else{
-            rows.push(m("td", {}, ""));
-        }
+        rows.push(m("td", {class:"view-lyrics",
+                           onclick:function(){
+                               that.viewport.sidepanel.contents
+                                   = new LyricsSidePanel(that.model,that.track);
+                               that.viewport.sidepanel.model.kind
+                                   = SidePanelState.LYRICS;
+                           }}, text));
         return rows;
     }
 }
@@ -26,7 +31,7 @@ class TrackView extends ModelView {
         this.bind("album");
         this.bind("year");
         this.bind("spotify_uri");
-        this.lyrics = new LyricsStatusIndicator(model.lyrics,viewport);
+        this.lyrics = new LyricsStatusIndicator(model.lyrics,model,viewport);
     }
     view(arg){
         var model = arg.model;
@@ -56,12 +61,12 @@ class PlaylistView extends ModelView {
         var model = that.model;
         var track_views = [];
         var header = m("tr", [
-            m("td", "title"),
-            m("td", "artist"),
-            m("td", "album"),
-            m("td", "year"),
-            m("td", "lyrics status"),
-            m("td", "lyrics")
+            m("th", "title"),
+            m("th", "artist"),
+            m("th", "album"),
+            m("th", "year"),
+            m("th", "lyrics status"),
+            m("th", "lyrics")
         ]);
         track_views.push(header);
         model.tracks.forEach(function(track,index){
@@ -69,6 +74,7 @@ class PlaylistView extends ModelView {
             track_views.push(track_view.view(track_view));
         });
         return m(".playlist",
-                 m("table",track_views));
+                 m("table",{class:'playlist-table',
+                            width:'100%'},track_views));
     }
 }

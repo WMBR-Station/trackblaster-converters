@@ -231,9 +231,11 @@ class Track {
 class Playlist {
     constructor(){
         this.tracks = [];
+        this.n = 0;
     }
     add(track){
         this.tracks.push(track);
+        this.n += 1;
     }
 
 }

@@ -14,19 +14,27 @@
     <script src="src/spotify_api.js"></script>
     <script src="src/data.js"></script>
     <script src="src/view/view.js"></script>
+    <link rel="stylesheet" type="text/css" href="src/index.css">
 </head>
 <body>
     <script>
      var root = document.body;
      var tlist = new Playlist();
+     var viewport = new Viewport(tlist);
+     m.mount(root, viewport);
      var t1 = new Track("Vampire Kiss", "Nic Cage", "Doki Doki Love");
+     t1.lyrics.add_line("never going to give you up");
+     t1.lyrics.add_line("never gonna let you down");
+     t1.lyrics.status = LyricStatus.UPLOADED;
      var t2 = new Track("Port of Call", "Nic Cage", "Doki Doki Love");
+     t2.lyrics.add_line("fuck shit");
+     t2.lyrics.status = LyricStatus.UPLOADED;
      var t3 = new Track("Leaving Las Vegas", "Nic Cage", "Doki Doki Love");
+     t3.lyrics.add_line("fuck shit");
+     t3.lyrics.status = LyricStatus.UPLOADED;
      tlist.add(t1);
      tlist.add(t2);
      tlist.add(t3);
-     var view = new PlaylistView(tlist);
-     m.mount(root, view);
      //model.salutation = "nihao";
     </script>
 </body>

@@ -37,7 +37,7 @@ class ModelView {
         this.model.unwatch(name);
     }
     bind(name){
-        this.model.watch(name, function(){m.redraw()});
+        this.model.watch(name, function(){m.redraw();});
     }
 }
 
@@ -52,7 +52,26 @@ class LyricsPane extends ModelView {
         this.bind("lyrics");
     }
     view(arg){
+        return m("sidepanel","PANEL");
+    }
+}
 
+class Viewport {
+    constructor(tracklist){
+        this.lyrics_panel = new LyricsPane();
+        this.playlist_view = new PlaylistView(tracklist,this);
+        this.action_footer = null;
+        this.import_dialog = null;
+    }
+    view(arg){
+        var that = arg.tag;
+        var playlist_view = that.playlist_view;
+        var lyrics_panel = that.lyrics_panel;
+        return m("viewport",
+                 [
+                     m(".playlist", playlist_view.view(playlist_view)),
+                     m(".lyrics", lyrics_panel.view(lyrics_panel))
+                 ]);
     }
 }
 class LyricsStatusIndicator extends ModelView {
@@ -72,6 +91,7 @@ class LyricsStatusIndicator extends ModelView {
         else{
             rows.push(m("td", {}, ""));
         }
+        return rows;
     }
 }
 class TrackView extends ModelView {
@@ -87,13 +107,16 @@ class TrackView extends ModelView {
     view(arg){
         var model = arg.model;
         var lyric_pane = arg.lyrics;
-        return m("tr", [
+        var cols = [
             m("td", {class: "title"}, model.title),
             m("td", {class: "artist"}, model.artists),
             m("td", {class: "album"}, model.album),
             m("td", {class: "year"}, model.year),
-            m(".lyrics", this.lyrics.view(lyric_pane))
-        ]);
+        ];
+        this.lyrics.view(lyric_pane).forEach(function(col,idx){
+            cols.push(col);
+        });
+        return m("tr", cols);
     }
 }
 
@@ -101,12 +124,11 @@ class PlaylistView extends ModelView {
 
     constructor(model,viewport){
         super(model);
-        this.bind("tracks");
+        this.bind("n");
         this.viewport = viewport;
     }
 
-    view(arg){
-        var that = arg.tag;
+    view(that){
         var model = that.model;
         var track_views = [];
         var header = m("tr", [
@@ -114,6 +136,7 @@ class PlaylistView extends ModelView {
             m("td", "artist"),
             m("td", "album"),
             m("td", "year"),
+            m("td", "lyrics status"),
             m("td", "lyrics")
         ]);
         track_views.push(header);

@@ -154,7 +154,12 @@ class ActionSidePanel {
     }
     view(that){
         return m("div",[
-            m("button", "Export to Trackblaster"),
+            m("button", {
+                onclick:function(){
+                    var text = that.viewport.playlist.export();
+                    download(text,"playlist.txt","plain/text");
+                }
+            },"Export to Trackblaster"),
             m("button", {
                 onclick:function(){
                     that.viewport.sidepanel.contents = new LyricsDownloaderSidePanel(that.viewport);

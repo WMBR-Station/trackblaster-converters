@@ -24,9 +24,10 @@
  q.add(id1)
  q.execute()
 
- var lyric = new GeniusLyrics(song1,id1.lyric_path)
- q.add(lyric)
- q.execute()
+ var api = new MockGeniusLyricAPI();
+ var lyric = new GeniusLyrics(api, song1,id1.lyric_path);
+ q.add(lyric);
+ q.execute();
 
 </script>
 </head>

@@ -16,29 +16,25 @@ class Downloadable {
 
 class GeniusLyrics extends Downloadable {
 
-    constructor(track,lyric_path){
+    constructor(api,track,lyric_path){
         super()
+        this.genius_lyric_api = api;
         this.lyric_path = lyric_path;
         this.track = track;
     }
     unpack(data){
-        console.log("lyric start");
         console.log(data);
-        console.log("lyric end");
     }
     request(cbk){
         var that = this;
-        $.get({
-            url: 'router.php',
-            data: {
-                method:'get_lyrics',
-                path:btoa(that.lyric_path)
-            },
-            success: function(data){
-                that.unpack(atob(data));
+        this.genius_lyric_api.get({
+            lyric_path:this.lyric_path,
+            success:function(data){
+                that.unpack(data);
                 cbk(Status.SUCCESS);
             },
-            error: function(data){
+            error:function(data){
+                console.log(data);
                 cbk(Status.FAILURE);
             }
         });
@@ -79,6 +75,7 @@ class GeniusId extends Downloadable {
         this.track = track;
         this.genius_api = genius_api;
         this.genius_id = null;
+        this.lyric_path = null;
     }
     unpack(data){
         var results = data['response']['hits'];
@@ -92,21 +89,21 @@ class GeniusId extends Downloadable {
                 var t1 = new GeniusTrack(result.title,
                                          result.primary_artist.name,
                                          result.id,
-                                         result.path);
+                                         result.path.substr(1));
                 tracks.push(t1);
                 scores.push(t1.similarity(that.track));
                 var t2 = new GeniusTrack(result.title_with_featured,
                                          result.primary_artist.name,
                                          result.id,
-                                         result.path);
+                                         result.path.substr(1));
                 tracks.push(t2);
                 scores.push(t2.similarity(that.track));
 
             }
         });
         var best_tid = argmin(scores);
-        self.genius_id = tracks[best_tid].id;
-        self.lyric_path = tracks[best_tid].lyric_path;
+        this.genius_id = tracks[best_tid].id;
+        this.lyric_path = tracks[best_tid].lyric_path;
     }
 
     request(cbk){
@@ -173,7 +170,7 @@ class SpotifyLink extends Downloadable {
 class Lyrics extends Downloadable {
     constructor(){
         super()
-        self.lyrics = []
+        this.lyrics = []
     }
 }
 class Track {

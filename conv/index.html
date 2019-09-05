@@ -2,6 +2,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
 <script src="src/tokens.js"></script>
+<script src="src/util.js"></script>
 <script src="src/mock.js"></script>
 <script src="src/genius_api.js"></script>
 <script src="src/spotify_api.js"></script>
@@ -23,7 +24,7 @@
  q.add(id1)
  q.execute()
 
- var lyric = new GeniusLyrics(song1,id1)
+ var lyric = new GeniusLyrics(song1,id1.lyric_path)
  q.add(lyric)
  q.execute()
 

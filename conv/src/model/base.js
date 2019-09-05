@@ -8,7 +8,7 @@ var LyricStatus = {
 var Status = {
     SUCCESS: "success",
     FAILURE: "failed",
-    INPROGRESS: "in_progress",
+    INPROGRESS: "in-progress",
     PENDING: "pending"
 }
 
@@ -78,44 +78,4 @@ class Playlist {
         this.n += 1;
     }
 
-}
-
-class WorkQueue {
-    constructor(){
-        this.queue = [];
-    }
-    add(dlobj){
-        this.queue.push(dlobj);
-    }
-    next(){
-        if(this.queue.length == 0){
-            if(this.callback){
-                this.callback();
-                this.callback = null;
-            }
-            return;
-        }
-        var dlobj = this.queue.pop();
-        var that = this;
-        dlobj.status = Status.INPROGRESS;
-        dlobj.request(function(status){
-            dlobj.status = status;
-            that.next();
-        });
-    }
-    done(){
-        return this.queue.length;
-    }
-    wait(){
-        while(!done){
-            sleep(10);
-        }
-    }
-    execute(cbk){
-        this.callback = cbk;
-        this.next();
-    }
-    flush(){
-        this.queue = [];
-    }
 }

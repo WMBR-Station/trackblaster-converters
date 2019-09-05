@@ -1,6 +1,7 @@
 html,body {
     height:98%;
     background-color:black;
+    color:white;
 }
 th {
     background-color:#3c6382;
@@ -19,6 +20,18 @@ button {
 }
 .view-lyrics{
     color:#0097e6;
+}
+.in-progress {
+    color:#0097e6;
+}
+.pending {
+    color:#7f8fa6;
+}
+.success {
+    color:#7bed9f;
+}
+.failure {
+    color:#ff6b81;
 }
 .severe {
     background-color: #b71540;

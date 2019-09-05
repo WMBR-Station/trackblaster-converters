@@ -52,3 +52,46 @@ class Downloadable {
 }
 
 
+
+class WorkQueue {
+    constructor(){
+        this.queue = [];
+        this.n = 0;
+    }
+    add(dlobj){
+        this.queue.push(dlobj);
+        this.n += 1;
+    }
+    next(){
+        if(this.queue.length == 0){
+            if(this.callback){
+                this.callback();
+                this.callback = null;
+            }
+            return;
+        }
+        var dlobj = this.queue.pop();
+        var that = this;
+        dlobj.status = Status.INPROGRESS;
+        dlobj.request(function(status){
+            dlobj.status = status;
+            that.completed -= 1;
+            that.next();
+        });
+    }
+    done(){
+        return this.queue.length == 0;
+    }
+    wait(){
+        while(!done){
+            sleep(10);
+        }
+    }
+    execute(cbk){
+        this.callback = cbk;
+        this.next();
+    }
+    flush(){
+        this.queue = [];
+    }
+}

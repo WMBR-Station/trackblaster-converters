@@ -1,8 +1,9 @@
 
 class Viewport {
-    constructor(tracklist){
-        this.sidepanel = new SidePanel();
-        this.playlist_view = new PlaylistView(tracklist,this);
+    constructor(){
+        this.playlist = new Playlist();
+        this.sidepanel = new SidePanel(this);
+        this.playlist_view = new PlaylistView(this.playlist,this);
         this.action_footer = null;
         this.import_dialog = null;
     }

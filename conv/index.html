@@ -1,39 +1,33 @@
 <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>My Application</title>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/mithril/mithril.js"></script>
 
-<script src="src/tokens.js"></script>
-<script src="src/util.js"></script>
-<script src="src/profanity_detector.js"></script>
-<script src="src/mock.js"></script>
-<script src="src/genius_api.js"></script>
-<script src="src/spotify_api.js"></script>
-<script src="src/data.js"></script>
-<script>
- api = new MockSpotifyAPI()
- q = new WorkQueue()
- var song1 = new SpotifyLink(api,
-                             "7HnycoSDt76YPYnVzLWeIO")
- var song2 = new SpotifyLink(api,
-                             "6uimn4Kh5FtNZh3bmbqdOq")
- q.add(song1)
- q.add(song2)
- q.execute()
-
- var api = new MockGeniusAPI()
- track1 = song1.to_track()
- id1 = new GeniusId(api,track1)
- q.add(id1)
- q.execute()
-
- var api = new MockGeniusLyricAPI();
- var lyric = new GeniusLyrics(api, track1,id1.lyric_path);
- q.add(lyric);
- q.execute();
-
- scan_for_profanity(track1.lyrics);
-</script>
+    <script src="src/tokens.js"></script>
+    <script src="src/util.js"></script>
+    <script src="src/profanity_detector.js"></script>
+    <script src="src/mock.js"></script>
+    <script src="src/genius_api.js"></script>
+    <script src="src/spotify_api.js"></script>
+    <script src="src/data.js"></script>
+    <script src="src/view/view.js"></script>
 </head>
 <body>
-TEST
+    <script>
+     var root = document.body;
+     var tlist = new Playlist();
+     var t1 = new Track("Vampire Kiss", "Nic Cage", "Doki Doki Love");
+     var t2 = new Track("Port of Call", "Nic Cage", "Doki Doki Love");
+     var t3 = new Track("Leaving Las Vegas", "Nic Cage", "Doki Doki Love");
+     tlist.add(t1);
+     tlist.add(t2);
+     tlist.add(t3);
+     var view = new PlaylistView(tlist);
+     m.mount(root, view);
+     //model.salutation = "nihao";
+    </script>
 </body>
 

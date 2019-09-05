@@ -228,6 +228,15 @@ class Track {
     }
 }
 
+class Playlist {
+    constructor(){
+        this.tracks = [];
+    }
+    add(track){
+        this.tracks.push(track);
+    }
+
+}
 
 class WorkQueue {
     constructor(){

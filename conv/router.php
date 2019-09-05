@@ -7,7 +7,7 @@ function get_lyrics($path) {
     echo base64_encode($resp);
 }
 
-if (preg_match('/\.(?:js|html)$/', $request)) {
+if (preg_match('/\.(?:js|html|css)$/', $request)) {
     return false;    // serve the requested resource as-is.
 }
 else{

@@ -1,0 +1,69 @@
+html,body {
+    height:98%;
+    background-color:black;
+}
+th {
+    background-color:#3c6382;
+}
+button {
+    background-color:#0a3d62;
+    font-size:1.2em;
+    width:95%;
+    border-color:#3c6382;
+    color:white;
+    padding:0.2em;
+    margin:0.2em;
+}
+.upload-lyrics{
+    color:#c23616;
+}
+.view-lyrics{
+    color:#0097e6;
+}
+.severe {
+    background-color: #b71540;
+    color:white;
+}
+.bad {
+    background-color: #EE5A24;
+    color:white;
+}
+.mild {
+    background-color: #f6b93b;
+    color: #444;
+}
+.good {
+    background-color:#079992;
+    color: white;
+}
+
+.unknown {
+    background-color:#57606f;
+    color:white;
+}
+.back-button {
+    color:#4a69bd;
+    font-size:2em;
+}
+.viewport{
+    display:flex;
+    height:100%;
+}
+.sidepanel {
+    width: 20%; /* 0 width - change this with JavaScript */
+    color:white;
+    background-color: #111; /* Black*/
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding-top: 60px; /* Place content 60px from the top */
+    transition: 0.5s; /* 0.5 second transition effect to slide in the sidepanel */
+}
+
+.playlist {
+    flex-grow:1;
+    height:100%;
+    background-color: #222; /* Black*/
+    color:white;
+}
+.playlist-table {
+    color:white;
+}

@@ -3,7 +3,7 @@ var LyricStatus = {
     UPLOADED: "uploaded",
     UNAVAILABLE: "unavailable",
     VALIDATED: "validated",
-    SCANNED: "scanned"
+    ANALYZED: "analyzed"
 }
 var Status = {
         SUCCESS: "success",
@@ -188,6 +188,7 @@ class Lyrics {
         this.lyrics = [];
         this.annotations = {};
         this.status = LyricStatus.UNAVAILABLE;
+        this.severity = ProfanityLevel.UNKNOWN;
     }
     clear(){
         this.lyrics = [];
@@ -195,7 +196,16 @@ class Lyrics {
         this.status = LyricStatus.UNAVAILABLE;
     }
     annotate(line_no,token_no,annot){
-        this.annotations[(line_no,token_no)] = annot;
+        var key = line_no + "."+token_no;
+        this.annotations[key] = annot;
+    }
+    has_annotation(i,j){
+        var key = i+ "."+ j;
+        return key in this.annotations;
+    }
+    annotation(i,j){
+        var key = i+ "."+ j;
+        return this.annotations[key];
     }
     *tokens(){
         for(var i=0; i < this.lyrics.length; i += 1){

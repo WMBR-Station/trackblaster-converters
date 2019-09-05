@@ -31,8 +31,9 @@ class ActionSidePanel extends ModelView {
     }
 }
 class LyricsSidePanel extends ModelView {
-    constructor(lyrics,track){
+    constructor(viewport,lyrics,track){
         super(lyrics);
+        this.viewport = viewport;
         this.track = track;
         this.bind("n_lines");
         this.bind("n_annots");
@@ -55,14 +56,30 @@ class LyricsSidePanel extends ModelView {
         else{
             var lines = [];
             lyrics.lyrics.forEach(function(line,idx1){
-                lines.push(m("div",line));
-                line.forEach(function(tokens,idx2){
-                    console.log(tokens);
+                var toks = [];
+                line.forEach(function(token,idx2){
+                    if(lyrics.has_annotation(idx1,idx2)){
+                        console.log(lyrics.annotations);
+                        var annot = lyrics.annotation(idx1,idx2);
+                        toks.push(m("mark",token));
+                    }
+                    else{
+                        toks.push(token);
+                    }
+                    toks.push(" ");
                 });
+                lines.push(m("div",toks));
             });
-            data = [m("lyrics",lines)];
+            data = [m(".lyrics",lines)];
         }
         return [
+            m(".back-button",{
+                onclick:function(){
+                    that.viewport.sidepanel.contents = new ActionSidePanel(that.viewport);
+                    that.viewport.sidepanel.model.kind
+                        = SidePanelState.ACTIONS;
+                  }
+              },"<<"),
             m("h2","Track Information"),
             header,
             m("h2","Lyrics"),

@@ -1,7 +1,9 @@
 var ProfanityLevel = {
     SEVERE: "severe",
     BAD: "bad",
-    MILD: "mild"
+    MILD: "mild",
+    GOOD: "good",
+    UNKNOWN: "unknown"
 }
 
 SEVERE_WORDS = [
@@ -36,9 +38,24 @@ function annotate_word(token){
     }
     return null;
 }
+function compute_profanity_score(counts){
+    if(ProfanityLevel.SEVERE in counts){
+        return ProfanityLevel.SEVERE;
+    }
+    else if(ProfanityLevel.BAD in counts){
+        return ProfanityLevel.BAD;
+    }
+    else if(ProfanityLevel.MILD in counts){
+        return ProfanityLevel.MILD;
+    }
+    else {
+        return ProfanityLevel.GOOD;
+    }
+}
 function scan_for_profanity(lyrics){
     var iterator = lyrics.tokens();
     var term = iterator.next();
+    var annots = {};
     while(!term.done){
         var line_no = term.value[0];
         var token_no = term.value[1];
@@ -46,7 +63,14 @@ function scan_for_profanity(lyrics){
         var annotation = annotate_word(token);
         if(annotation){
             lyrics.annotate(line_no,token_no,annotation);
+            if(!(annotation in annots)){
+                annots[annotation] = 0;
+            }
+            console.log(annots)
+            annots[annotation] += 1;
         }
         term = iterator.next();
     }
+    lyrics.status = LyricStatus.ANALYZED;
+    lyrics.severity = compute_profanity_score(annots);
 }

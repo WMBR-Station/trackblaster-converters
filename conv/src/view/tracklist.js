@@ -6,20 +6,31 @@ class LyricsStatusIndicator extends ModelView {
         this.viewport = viewport;
     }
     view(that){
-        var rows= [
-            m("td", {class:"lyrics"}, that.model.status)
-        ];
-        var text = "view lyrics";
-        if(that.model.status == LyricStatus.UNAVAILABLE){
-            var text = "upload lyrics";
+        var open_lyrics = function(){
+            that.viewport.sidepanel.contents
+                = new LyricsSidePanel(that.viewport,
+                                      that.model,
+                                      that.track);
+            that.viewport.sidepanel.model.kind
+                = SidePanelState.LYRICS;
         }
-        rows.push(m("td", {class:"view-lyrics",
-                           onclick:function(){
-                               that.viewport.sidepanel.contents
-                                   = new LyricsSidePanel(that.model,that.track);
-                               that.viewport.sidepanel.model.kind
-                                   = SidePanelState.LYRICS;
-                           }}, text));
+
+        var rows= [
+            m("td",
+              {
+                  class:that.model.severity,
+                  onclick:open_lyrics
+              },
+              that.model.status)
+        ];
+        var text = "view";
+        if(that.model.status == LyricStatus.UNAVAILABLE){
+            var text = "upload";
+        }
+        rows.push(m("td", {
+            class:text+"-lyrics",
+            onclick:open_lyrics
+        }, text));
         return rows;
     }
 }

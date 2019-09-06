@@ -174,8 +174,7 @@ class ActionSidePanel {
                     that.viewport.sidepanel.contents = new LyricsDownloaderSidePanel(that.viewport);
                     that.viewport.sidepanel.state = SidePanelState.LYRICSDOWNLOAD;
                 }
-            }, "Scan for Profanity"),
-            m("button", "Clear Playlist")
+            }, "Scan for Profanity")
         ]);
     }
 }
@@ -187,9 +186,70 @@ class LyricsSidePanel extends ModelView {
         this.bind("n_lines");
         this.bind("n_annots");
     }
+    view_severity_selector(){
+        var options = [];
+        var that = this;
+        for(var level in ProfanityLevel){
+            if(level == ProfanityLevel.UNKNOWN){
+                continue;
+            }
+            var name = ProfanityLevel[level];
+            options.push(m("option",{value:name,class:name},name));
+        }
+
+        return m("select",{
+            id:"severity-select",
+            selected:this.track.lyrics.severity,
+            class:this.track.lyrics.severity,
+            onchange:function(args){
+                var val = $("#severity-select").val();
+                $("#severity-select").removeClass().addClass(val);
+                that.track.lyrics.severity = val;
+            }
+        },options);
+    }
+    view_lyrics_viewport(){
+        var lyrics = this.model;
+        var lines = [];
+        lyrics.lyrics.forEach(function(line,idx1){
+            var toks = [];
+            line.forEach(function(token,idx2){
+                if(lyrics.has_annotation(idx1,idx2)){
+                    console.log(lyrics.annotations);
+                    var annot = lyrics.annotation(idx1,idx2);
+                    toks.push(m("mark",{class:annot},token));
+                }
+                else{
+                    toks.push(token);
+                }
+                toks.push(" ");
+            });
+            lines.push(m("div",{id:"line"+idx1},toks));
+        });
+        return m(".lyrics",lines);
+    }
+    view_annotations_viewport(){
+        var lyrics = this.model;
+        var annotations = [];
+        var jump_to_line = function(lineno){
+            var w = $('.lyrics');
+            var row = $('#line'+lineno);
+            var top = w.scrollTop() + row.position().top - 1.3*w.height();
+            console.log(row.position(),w.scrollTop());
+            $('.lyrics').animate({scrollTop: top}, 1000 );
+        };
+        lyrics.annotations(function(lineno,tokno,annot){
+            annotations.push(m("div",{
+                class:annot,
+                onclick:(function(l){
+                    return function(){jump_to_line(l);};
+                })(lineno)
+            },lyrics.token(lineno,tokno)));
+        });
+        return m("div",annotations);
+    }
     view(that){
         var lyrics = that.model;
-        console.log(that);
         var header = [
             m("div",that.track.title),
             m("div",that.track.artist),
@@ -202,42 +262,13 @@ class LyricsSidePanel extends ModelView {
             data = [m("button","Search for Lyrics"),
                     m("textarea","paste lyrics here"),
                     m("button","Upload Lyrics")];
-            annotations = [];
         }
         else{
-            var lines = [];
-            lyrics.lyrics.forEach(function(line,idx1){
-                var toks = [];
-                line.forEach(function(token,idx2){
-                    if(lyrics.has_annotation(idx1,idx2)){
-                        console.log(lyrics.annotations);
-                        var annot = lyrics.annotation(idx1,idx2);
-                        toks.push(m("mark",{class:annot},token));
-                    }
-                    else{
-                        toks.push(token);
-                    }
-                    toks.push(" ");
-                });
-                lines.push(m("div",{id:"line"+idx1},toks));
-            });
-            data = [m(".lyrics",lines)];
 
-            var jump_to_line = function(lineno){
-                var w = $('.lyrics');
-                var row = $('#line'+lineno);
-                var top = row.offset().top;
-                console.log("broken");
-                $('.lyrics').animate({scrollTop: top}, 1000 );
-            };
-            lyrics.annotations(function(lineno,tokno,annot){
-                annotations.push(m("div",{
-                    class:annot,
-                    onclick:(function(l){
-                        return function(){jump_to_line(l);};
-                    })(lineno)
-                },lyrics.token(lineno,tokno)));
-            });
+            header.push(that.view_severity_selector());
+            data = that.view_lyrics_viewport();
+            annotations = this.view_annotations_viewport();
+
         }
         return [
             m(".back-button",{
@@ -249,6 +280,7 @@ class LyricsSidePanel extends ModelView {
               },"<<"),
             m("h2","Track Information"),
             header,
+            m("h2","Annotations"),
             annotations,
             m("h2","Lyrics"),
             data

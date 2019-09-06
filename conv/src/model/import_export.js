@@ -15,13 +15,13 @@ function spotify_import(plaintext){
 }
 
 function itunes_import(playlist,plaintext){
-    var tracks = plaintext.split("\n");
-    for(var i=0; i < tracks.length; i++){
+    var tracks = plaintext.split("\r");
+    for(var i=1; i < tracks.length; i++){   //start from 1 to skip the header
         var data = tracks[i].split("\t")
         var title = data[0]
         var artists = data[1]
         var album = data[3]
-        track = new Track(data[0], data[1], data[16])
+        track = new Track(data[0], data[1], data[3], data[16])
         playlist.add(track);
     }
     return playlist;

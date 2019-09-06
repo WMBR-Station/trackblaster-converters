@@ -4,19 +4,26 @@ class GeniusLyricAPI{
     constructor(){}
 
     get(args){
+	var that = this;
+	console.log(args.lyric_path);
         $.get({
             url: 'router.php/get_lyrics',
             data: {
-                path:btoa(that.lyric_path)
+                path:btoa(args.lyric_path)
             },
             success: function(data){
-                args.success(atob(data));
+		var lyrics = atob(data);
+                var parsed =lyrics.split("<div class=\"lyrics\">");
+		if(parsed.length == 1){
+		   args.error("failed to get lyrics: could not find lyrics in html");
+		   return;
+		}
+		var verses = parsed[1].split("</div>")[0];
+                var lyrics_text = $(verses).text();
+		args.success(lyrics_text);
             },
             error: function(data){
-                var verses =data.split("<div class=\"lyrics\">")[1]
-                    .split("</div>")[0];
-                var lyric_text = $(verses).text();
-                args.error(lyric_text);
+                args.error(data);
             }
         });
     }

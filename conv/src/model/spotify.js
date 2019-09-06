@@ -20,7 +20,8 @@ class SpotifyLink extends Downloadable {
         var title = datum.name;
         var spotify_uri = datum.uri;
         this.track = new Track(title,artists,album,release_date);
-        this.spotify_uri = spotify_uri;
+	this.track.spotify_uri = spotify_uri;
+       	console.log(this.track);
     }
     request(cbk){
         var url = "https://api.spotify.com/v1/tracks/"+this.track_id;

@@ -31,6 +31,10 @@ if (!Object.prototype.watch) {
 }
 class ModelView {
     constructor(model){
+	if(model == null){
+           console.log(this);
+	   console.log("model is null");
+	}
         this.model = model;
     }
     unbind(name){
@@ -75,12 +79,12 @@ class WorkQueue {
         dlobj.status = Status.INPROGRESS;
         dlobj.request(function(status){
             dlobj.status = status;
-            that.completed -= 1;
+            that.n -= 1;
             that.next();
         });
     }
     done(){
-        return this.queue.length == 0;
+        return this.n == 0;
     }
     wait(){
         while(!done){

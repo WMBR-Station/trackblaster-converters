@@ -80,7 +80,6 @@ class SpotifyLoadSidePanel extends ModelView {
     constructor(viewport,track_ids){
         var queue = new WorkQueue();
         super(queue);
-        this.bind("n");
         this.viewport = viewport;
         this.links = [];
         this.views = [];
@@ -89,11 +88,13 @@ class SpotifyLoadSidePanel extends ModelView {
         track_ids.forEach(function(track_id,i){
             var dlobj = new SpotifyLink(that.viewport.apis.spotify_api,
                                         track_id);
-            that.links.push(dlobj);
             that.views.push(new SpotifyLoadElement(dlobj));
+            that.links.push(dlobj);
             that.queue.add(dlobj);
         });
         this.queue.execute();
+        this.bind("n");
+	m.redraw();
     }
     back(){
         return new SpotifyImportSidePanel(this.viewport);
@@ -240,7 +241,6 @@ class LyricsSidePanel extends ModelView {
             var toks = [];
             line.forEach(function(token,idx2){
                 if(lyrics.has_annotation(idx1,idx2)){
-                    console.log(lyrics.annotations);
                     var annot = lyrics.annotation(idx1,idx2);
                     toks.push(m("mark",{class:annot},token));
                 }
@@ -260,7 +260,6 @@ class LyricsSidePanel extends ModelView {
             var w = $('.lyrics');
             var row = $('#line'+lineno);
             var top = w.scrollTop() + row.position().top - 1.3*w.height();
-            console.log(row.position(),w.scrollTop());
             $('.lyrics').animate({scrollTop: top}, 1000 );
         };
         lyrics.annotations(function(lineno,tokno,annot){

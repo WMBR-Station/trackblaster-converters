@@ -36,9 +36,10 @@ class LyricsStatusIndicator extends ModelView {
     }
 }
 class TrackView extends ModelView {
-    constructor(model,viewport){
+    constructor(model,viewport){	
         super(model);
-        this.bind("title");
+        console.log(model);
+	this.bind("title");
         this.bind("artists");
         this.bind("album");
         this.bind("year");

@@ -93,6 +93,9 @@ class Playlist {
         this.n = 0;
     }
     add(track){
+	if(track == undefined){
+ 	   throw "track is null";
+	}
         this.tracks.push(track);
         this.n += 1;
     }

@@ -8,14 +8,15 @@ class GeniusLyrics extends Downloadable {
         this.track = track;
     }
     unpack(data){
-        console.log(data);
-        this.track.lyrics.from_text(data);
+	console.log(data);
+	this.track.lyrics.from_text(data);
         scan_for_profanity(this.track.lyrics);
 
     }
     request(cbk){
         var that = this;
-        if(this.lyric_path == null){
+        if(this.lyric_path == null ||
+		this.lyric_path == undefined){
             this.track.lyrics.status = LyricStatus.UNAVAILABLE;
             return;
         }

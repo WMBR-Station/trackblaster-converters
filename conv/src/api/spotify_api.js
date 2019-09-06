@@ -8,18 +8,15 @@ var SpotifyAPIState = {
 
 class SpotifyAPI{
 
-    constructor () {
+    constructor(){
         this.state = SpotifyAPIState.PENDING;
         this.redirect_uri = window.location.href.split("?")[0];
         this.spotify_page = "spotify.php";
         this.client_id = SPOTIFY_CLIENT_ID;
         this.client_secret = SPOTIFY_CLIENT_SECRET;
         this.callbacks = [];
-        this.oauth.on_access_token(function(at){
-            console.log("READY");
-        });
-        this.oauth.authorize();
     }
+
 
     request_authorization(){
         var url = "https://accounts.spotify.com/authorize";

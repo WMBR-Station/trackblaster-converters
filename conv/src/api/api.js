@@ -4,6 +4,10 @@ class APIManager {
         this.genius_api = new GeniusAPI();
         this.spotify_api = new SpotifyAPI();
         this.lyrics_api = new GeniusLyricAPI();
+        this.spotify_api.on_access_token(function(at){
+            console.log("READY");
+        });
+        this.spotify_api.authorize();
     }
 }
 

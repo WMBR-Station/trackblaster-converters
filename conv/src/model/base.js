@@ -63,7 +63,15 @@ class Lyrics {
         var word_tokens = tokens.filter(v=>v!='');
         this.lyrics.push(word_tokens);
     }
-
+    from_text(data){
+        var lines = data.split("\n");
+        var that = this;
+        this.clear();
+        lines.forEach(function(line,idx){
+            that.add_line(line);
+        });
+        this.status = LyricStatus.UPLOADED;
+    }
 }
 class Track {
     constructor(title,artists,album,year){

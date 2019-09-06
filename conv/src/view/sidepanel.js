@@ -55,11 +55,8 @@ class LyricsDownloaderSidePanel extends ModelView {
             rows.push(v.view(v));
         });
         if(that.queue.done()){
-            scan_for_profanity(that.viewport.playlist);
-            console.log(that.viewport.sidepanel.state);
             that.viewport.sidepanel.contents = new ActionSidePanel(that.viewport);
             that.viewport.sidepanel.state = SidePanelState.ACTIONS;
-            console.log(that.viewport.sidepanel.state);
             that.links = [];
             return [];
         }
@@ -186,6 +183,16 @@ class LyricsSidePanel extends ModelView {
         this.bind("n_lines");
         this.bind("n_annots");
     }
+    view_delete_lyrics_button(){
+        var that = this;
+        return m("button",{
+            onclick:function(){
+                that.track.lyrics.clear();
+                that.track.lyrics.severity = ProfanityLevel.UNKNOWN;
+                that.track.lyrics.status = LyricStatus.UNAVAILABLE;
+            }
+        },"delete lyrics")
+    }
     view_severity_selector(){
         var options = [];
         var that = this;
@@ -194,12 +201,13 @@ class LyricsSidePanel extends ModelView {
                 continue;
             }
             var name = ProfanityLevel[level];
-            options.push(m("option",{value:name,class:name},name));
+            options.push(m("option",{value:name,
+                                     selected:name==this.track.lyrics.severity,
+                                     class:name},name));
         }
 
         return m("select",{
             id:"severity-select",
-            selected:this.track.lyrics.severity,
             class:this.track.lyrics.severity,
             onchange:function(args){
                 var val = $("#severity-select").val();
@@ -248,6 +256,45 @@ class LyricsSidePanel extends ModelView {
         });
         return m("div",annotations);
     }
+    view_back_button(){
+        return m(".back-button",{
+            onclick:function(){
+                that.viewport.sidepanel.contents = new ActionSidePanel(that.viewport);
+                that.viewport.sidepanel.model.kind
+                    = SidePanelState.ACTIONS;
+            }
+        },"<<");
+    }
+    view_unknown_lyrics_viewport(){
+        var that = this;
+        var lyrics_search = m("button",
+                              {
+                                  onclick:function(){
+                                      var query = that.track.title + " ";
+                                      query += that.track.artists + " lyrics";
+                                      window.open("https://www.google.com/search?q="+
+                                                  encodeURIComponent(query));
+                                  }
+                              },
+                              "Search for Lyrics");
+        var lyrics_upload = m("button",
+                              {
+                                  onclick:function(){
+                                      var lyrics = $("#user-lyrics").val();
+                                      that.model.from_text(lyrics);
+                                      scan_for_profanity(that.model);
+                                  }
+                              },"Upload");
+        var lyrics_area =  m("textarea",{
+            id:"user-lyrics",
+            hint:"paste lyrics here"
+        }, "paste lyrics here");
+
+        return m("div",[lyrics_search,
+                        lyrics_area,
+                        lyrics_upload]);
+
+    }
     view(that){
         var lyrics = that.model;
         var header = [
@@ -256,35 +303,31 @@ class LyricsSidePanel extends ModelView {
             m("div",that.track.album),
             m("div",that.track.year)
         ];
-        var data = [];
-        var annotations = [];
         if(lyrics.status == LyricStatus.UNAVAILABLE){
-            data = [m("button","Search for Lyrics"),
-                    m("textarea","paste lyrics here"),
-                    m("button","Upload Lyrics")];
+            var data = that.view_unknown_lyrics_viewport();
+            return [
+                that.view_back_button(),
+                m("h2","Track Information"),
+                header,
+                m("h2","Lyrics"),
+                data
+            ];
         }
         else{
-
             header.push(that.view_severity_selector());
-            data = that.view_lyrics_viewport();
-            annotations = this.view_annotations_viewport();
-
+            var data = that.view_lyrics_viewport();
+            var annotations = this.view_annotations_viewport();
+            return [
+                that.view_back_button(),
+                that.view_delete_lyrics_button(),
+                m("h2","Track Information"),
+                header,
+                m("h2","Annotations"),
+                annotations,
+                m("h2","Lyrics"),
+                data
+            ];
         }
-        return [
-            m(".back-button",{
-                onclick:function(){
-                    that.viewport.sidepanel.contents = new ActionSidePanel(that.viewport);
-                    that.viewport.sidepanel.model.kind
-                        = SidePanelState.ACTIONS;
-                  }
-              },"<<"),
-            m("h2","Track Information"),
-            header,
-            m("h2","Annotations"),
-            annotations,
-            m("h2","Lyrics"),
-            data
-        ];
     }
 }
 class SidePanelModel {

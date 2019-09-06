@@ -8,13 +8,10 @@ class GeniusLyrics extends Downloadable {
         this.track = track;
     }
     unpack(data){
-        var lines = data.split("\n");
-        var that = this;
-        this.track.lyrics.clear();
-        lines.forEach(function(line,idx){
-            that.track.lyrics.add_line(line);
-        });
-        this.track.lyrics.status = LyricStatus.UPLOADED;
+        console.log(data);
+        this.track.lyrics.from_text(data);
+        scan_for_profanity(this.track.lyrics);
+
     }
     request(cbk){
         var that = this;

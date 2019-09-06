@@ -7,7 +7,7 @@ var ProfanityLevel = {
 }
 
 SEVERE_WORDS = [
-    "fuck", "fucka", "fucking", "fucker", "motherfucker", "motherfuck",
+    "fuck", "fucka", "fucking", "fucker", "fucked", "motherfucker", "motherfuck",
     "shit", "cunt", "faggot", "nigger", "niglet", "nigga", "niggers",
     "spick"
 ]

@@ -143,24 +143,32 @@ class SpotifyImportSidePanel {
     }
 }
 
-class ITunesImportSidePanel {
+class ItunesImportSidePanel {
     constructor(viewport){
         this.viewport = viewport;
-        this.loader = null;
         this.state = SidePanelState.ITUNESIMPORT;
     }
     back(){
         return new ImportSidePanel(this.viewport);
     }
     view(that){
+        var that = this;
         return [
             m("h1", "Itunes Importer"),
-            m("button",{
-                class:'big-button',
-                onclick: function(){
-                    console.log("unimplemented");
+            m("input",{
+                type:"file",
+                onchange:function(e){
+                    var file = e.target.files[0];
+                    console.log(file);
+                    var reader = new FileReader();
+                    reader.onload = function(data){
+                        console.log(reader.result);
+                        console.log("IMPORT GOES HERE: RETURN TRACKLIST");
+                    };
+                    reader.readAsText(file,'utf8');
+
                 }
-            }, "Import")
+            },"Upload Itunes File"),
         ];
     }
 }

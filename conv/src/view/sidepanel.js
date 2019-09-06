@@ -165,8 +165,8 @@ class ItunesImportSidePanel {
                         that.viewport.playlist.clear();
                         console.log(reader.result);
                         that.viewport.playlist.clear();
-                        var imported = itunes_import(that.viewport.playlist,
-                                                     reader.result);
+                        itunes_import(that.viewport.playlist,
+                                      reader.result);
 
                     };
                     reader.readAsText(file,'utf8');

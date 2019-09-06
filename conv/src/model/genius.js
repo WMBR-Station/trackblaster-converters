@@ -18,6 +18,7 @@ class GeniusLyrics extends Downloadable {
         if(this.lyric_path == null ||
 		this.lyric_path == undefined){
             this.track.lyrics.status = LyricStatus.UNAVAILABLE;
+            cbk(Status.FAILURE);
             return;
         }
         this.genius_lyric_api.get({
@@ -87,6 +88,9 @@ class GeniusId extends Downloadable {
 
             }
         });
+	if(scores.length == 0){
+	   return;
+	}
         var best_tid = argmin(scores);
         this.genius_id = tracks[best_tid].id;
         this.lyric_path = tracks[best_tid].lyric_path;
@@ -136,7 +140,6 @@ class GeniusQuery extends Downloadable {
                     else{
                         status = Status.INPROGRESS;
                     }
-                    console.log(that.track);
                 }
                 cbk(status);
             });

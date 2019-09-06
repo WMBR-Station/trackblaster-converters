@@ -17,7 +17,7 @@ class GeniusElement extends ModelView {
 
     view(that){
         return m("tr",[
-            m("td", that.model.status),
+            m("td",{class:that.model.status},that.model.status),
             m("td", that.model.track.title),
             m("td", that.model.track.artist)
         ]);

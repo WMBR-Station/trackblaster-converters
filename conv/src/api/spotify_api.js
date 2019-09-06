@@ -38,6 +38,15 @@ class SpotifyAPI{
             else{
                 obj.headers = {'Authorization': 'Bearer '+this.access_token};
             }
+            var that = this;
+            var orig_error = obj.error;
+            var wrapped_error = function(err){
+		if(err.responseText.includes("access token expired")){
+		   that.request_authorization();
+		}
+	        orig_error(err);
+	    }
+            obj.error = wrapped_error;
             $.ajax(obj);
         }
         else {

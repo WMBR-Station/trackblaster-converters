@@ -15,22 +15,23 @@ class LyricsStatusIndicator extends ModelView {
                 = SidePanelState.LYRICS;
         };
 
-        var rows= [
-            m("td",
-              {
-                  class:that.model.severity,
-                  onclick:open_lyrics
-              },
-              that.model.status)
-        ];
+        var rows= [];
+
         var text = "view";
         if(that.model.status == LyricStatus.UNAVAILABLE){
             var text = "upload";
         }
-        rows.push(m("td", {
-            class:text+"-lyrics",
-            onclick:open_lyrics
-        }, text));
+        rows.push(m("td",
+                    m("button", {
+                        class:text+"-lyrics",
+                        onclick:open_lyrics
+                    }, text)));
+        rows.push(m("td",
+                    {
+                        class:that.model.severity,
+                        onclick:open_lyrics
+                    },
+                    that.model.status));
         return rows;
     }
 }
@@ -76,16 +77,25 @@ class PlaylistView extends ModelView {
             m("th", "artist"),
             m("th", "album"),
             m("th", "year"),
-            m("th", "lyrics status"),
-            m("th", "lyrics")
+            m("th", "lyrics"),
+            m("th", "status")
         ]);
         track_views.push(header);
         model.tracks.forEach(function(track,index){
             var track_view = new TrackView(track,that.viewport);
             track_views.push(track_view.view(track_view));
         });
-        return m(".playlist",
-                 m("table",{class:'playlist-table',
-                            width:'100%'},track_views));
+        if(model.tracks.length > 0){
+            return m(".playlist",
+                     m("table",{
+                         class:'playlist-table',
+                         width:'100%'
+                     },
+                       track_views));
+        }
+        else{
+            return m(".playlist",
+                     m("h1",{class:'subtle-text'},"import playlist to continue."));
+        }
     }
 }

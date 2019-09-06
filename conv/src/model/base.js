@@ -31,8 +31,11 @@ class Lyrics {
             var line_no = parseInt(args[0]);
             var tok_no = parseInt(args[1]);
             var annot = this._annotations[key];
-            cbk(line_no,tok_no,annot);
+            if(cbk != undefined){
+                cbk(line_no,tok_no,annot);
+            }
         }
+        return Object.entries(this._annotations);
     }
     annotate(line_no,token_no,annot){
         var key = line_no + "."+token_no;

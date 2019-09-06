@@ -33,6 +33,7 @@ class LyricsDownloaderSidePanel extends ModelView {
         super(queue);
         this.bind("n");
         this.viewport = viewport;
+        this.state = SidePanelState.LYRICSDOWNLOAD;
         this.links = [];
         this.views = [];
         var that = this;
@@ -48,21 +49,19 @@ class LyricsDownloaderSidePanel extends ModelView {
         that.queue.execute();
 
     }
-
+    back(){
+        return new ActionSidePanel(this.viewport);
+    }
     view(that){
         var rows = [];
         this.views.forEach(function(v){
             rows.push(v.view(v));
         });
         if(that.queue.done()){
-            that.viewport.sidepanel.contents = new ActionSidePanel(that.viewport);
-            that.viewport.sidepanel.state = SidePanelState.ACTIONS;
+            that.viewport.sidepanel.set_contents(new ActionSidePanel(that.viewport));
             that.links = [];
-            return [];
         }
-        else {
-            return m("table",rows);
-        }
+        return m("table",rows);
     }
 }
 class SpotifyLoadElement extends ModelView {
@@ -96,6 +95,9 @@ class SpotifyLoadSidePanel extends ModelView {
         });
         this.queue.execute();
     }
+    back(){
+        return new SpotifyImportSidePanel(this.viewport);
+    }
     view(that){
         var rows = [];
         that.views.forEach(function(v){
@@ -105,8 +107,7 @@ class SpotifyLoadSidePanel extends ModelView {
             that.links.forEach(function(linkobj){
                 that.viewport.playlist.add(linkobj.track);
             });
-            that.viewport.sidepanel.contents = new ActionSidePanel(that.viewport);
-            that.viewport.sidepanel.state = SidePanelState.ACTIONS;
+            that.viewport.sidepanel.set_contents(new ActionSidePanel(that.viewport));
             that.links = [];
         }
         return [
@@ -120,6 +121,9 @@ class SpotifyImportSidePanel {
         this.viewport = viewport;
         this.loader = null;
     }
+    back(){
+        return new ImportSidePanel(this.viewport);
+    }
     view(that){
         return [
             m("h1", "Spotify Importer"),
@@ -127,11 +131,11 @@ class SpotifyImportSidePanel {
               {class:"spotify-playlist"},
               "copy-paste spotify playlist here"),
             m("button",{
+                class:'big-button',
                 onclick: function(){
                     var track_ids = spotify_import($(".spotify-playlist").val());
-                    that.viewport.sidepanel.contents = new SpotifyLoadSidePanel(that.viewport,
-                                                                                track_ids);
-                    that.viewport.sidepanel.state = SidePanelState.SPOTIFYLOAD;
+                    that.viewport.sidepanel.set_contents(new SpotifyLoadSidePanel(that.viewport,
+                                                                                  track_ids));
                 }
             }, "Import")
         ];
@@ -141,16 +145,24 @@ class ImportSidePanel {
     constructor(viewport){
         this.viewport = viewport;
     }
+    back(){
+        return null;
+    }
     view(that){
-        console.log(that)
         return [
-            m("h1","Import Playlist From:"),
-            m("button",{onclick:function(){
-                that.viewport.sidepanel.contents = new SpotifyImportSidePanel(that.viewport);
-                that.viewport.sidepanel.state = SidePanelState.SPOTIFYIMPORT;
-            }},"Spotify"),
-            m("button","ITunes"),
-            m("button","Trackblaster")
+            m("h1","Import Playlist"),
+            m("button",{
+                class:'big-button',
+                onclick:function(){
+                    that.viewport.sidepanel.contents = new SpotifyImportSidePanel(that.viewport);
+                    that.viewport.sidepanel.state = SidePanelState.SPOTIFYIMPORT;
+                }},"Spotify"),
+            m("button",{
+                class:'big-button'
+            },"ITunes"),
+            m("button",{
+                class:'big-button'
+            },"Trackblaster")
         ];
     }
 }
@@ -158,15 +170,20 @@ class ActionSidePanel {
     constructor(viewport){
         this.viewport = viewport;
     }
+    back(){
+        return null;
+    }
     view(that){
         return m("div",[
             m("button", {
+                class:'big-button',
                 onclick:function(){
                     var text = trackblaster_export(that.viewport.playlist);
                     download(text,"playlist.txt","plain/text");
                 }
             },"Export to Trackblaster"),
             m("button", {
+                class:'big-button',
                 onclick:function(){
                     that.viewport.sidepanel.contents = new LyricsDownloaderSidePanel(that.viewport);
                     that.viewport.sidepanel.state = SidePanelState.LYRICSDOWNLOAD;
@@ -180,18 +197,18 @@ class LyricsSidePanel extends ModelView {
         super(lyrics);
         this.viewport = viewport;
         this.track = track;
-        this.bind("n_lines");
-        this.bind("n_annots");
+        this.state = SidePanelState.LYRICS;
     }
     view_delete_lyrics_button(){
         var that = this;
         return m("button",{
+            class:'delete-lyrics-button danger-button',
             onclick:function(){
                 that.track.lyrics.clear();
                 that.track.lyrics.severity = ProfanityLevel.UNKNOWN;
                 that.track.lyrics.status = LyricStatus.UNAVAILABLE;
             }
-        },"delete lyrics")
+        },"delete lyrics");
     }
     view_severity_selector(){
         var options = [];
@@ -256,19 +273,14 @@ class LyricsSidePanel extends ModelView {
         });
         return m("div",annotations);
     }
-    view_back_button(){
-        return m(".back-button",{
-            onclick:function(){
-                that.viewport.sidepanel.contents = new ActionSidePanel(that.viewport);
-                that.viewport.sidepanel.model.kind
-                    = SidePanelState.ACTIONS;
-            }
-        },"<<");
+    back(){
+        return new ActionSidePanel(this.viewport);
     }
     view_unknown_lyrics_viewport(){
         var that = this;
         var lyrics_search = m("button",
                               {
+                                  class:'big-button',
                                   onclick:function(){
                                       var query = that.track.title + " ";
                                       query += that.track.artists + " lyrics";
@@ -279,6 +291,7 @@ class LyricsSidePanel extends ModelView {
                               "Search for Lyrics");
         var lyrics_upload = m("button",
                               {
+                                  class:'big-button',
                                   onclick:function(){
                                       var lyrics = $("#user-lyrics").val();
                                       that.model.from_text(lyrics);
@@ -298,18 +311,16 @@ class LyricsSidePanel extends ModelView {
     view(that){
         var lyrics = that.model;
         var header = [
-            m("div",that.track.title),
-            m("div",that.track.artist),
-            m("div",that.track.album),
-            m("div",that.track.year)
+            m("div",{class:'song-title'},that.track.title),
+            m("div",{class:'song-artist'},that.track.artist),
+            m("div",{class:'album'},that.track.album),
+            m("div",{class:'year'},that.track.year)
         ];
         if(lyrics.status == LyricStatus.UNAVAILABLE){
             var data = that.view_unknown_lyrics_viewport();
             return [
-                that.view_back_button(),
-                m("h2","Track Information"),
                 header,
-                m("h2","Lyrics"),
+                m("h2","Upload Lyrics"),
                 data
             ];
         }
@@ -317,22 +328,23 @@ class LyricsSidePanel extends ModelView {
             header.push(that.view_severity_selector());
             var data = that.view_lyrics_viewport();
             var annotations = this.view_annotations_viewport();
-            return [
-                that.view_back_button(),
-                that.view_delete_lyrics_button(),
-                m("h2","Track Information"),
-                header,
-                m("h2","Annotations"),
-                annotations,
-                m("h2","Lyrics"),
-                data
-            ];
+            var contents = [that.view_delete_lyrics_button(),
+                            header];
+            if(lyrics.annotations().length > 0){
+                contents.push(m("h2","Annotations"));
+                contents.push(annotations);
+            }
+            if(lyrics.lyrics.length > 0){
+                contents.push(m("h2","Lyrics"));
+                contents.push(data);
+            }
+            return contents;
         }
     }
 }
 class SidePanelModel {
     constructor(){
-        this.kind = SidePanelState.ACTIONS;
+        this.kind = null;
     }
 }
 
@@ -341,9 +353,29 @@ class SidePanel extends ModelView {
         super(new SidePanelModel());
         this.bind("kind");
         this.viewport = viewport;
-        this.contents = new ImportSidePanel(this.viewport);
+        this.set_contents(new ImportSidePanel(this.viewport));
+    }
+    set_contents(obj){
+        this.contents = obj;
+        this.model.kind = obj.state;
     }
     view(that){
-        return m(".sidepanel",that.contents.view(that.contents));
+        var that = this;
+        var back_button =m("button",{
+            class:'back-button',
+            onclick:function(){
+                var last = that.contents.back();
+                if(last != null){
+                    that.set_contents(last);
+                }
+            }
+        },"< back");
+        if(that.contents.back() == null){
+            return m(".sidepanel",that.contents.view(that.contents));
+        }
+        return m(".sidepanel",[
+            back_button,
+            that.contents.view(that.contents)
+        ]);
     }
 }

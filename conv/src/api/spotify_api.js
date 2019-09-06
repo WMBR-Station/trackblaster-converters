@@ -1,41 +1,45 @@
-var SpotifyAPI = function(){
-    var State = {
-        PENDING: "pending",
-        READY: "ready"
+var SpotifyAPIState = {
+    READY: "sp-ready",
+    HASTOKEN: "sp-has-token",
+    PENDING: "sp-pending",
+    EXPIRED: "sp-expired",
+    ERROR: "sp-error"
+}
+
+class SpotifyAPI{
+
+    constructor () {
+        this.state = SpotifyAPIState.PENDING;
+        this.redirect_uri = window.location.href.split("?")[0];
+        this.spotify_page = "spotify.php";
+        this.client_id = SPOTIFY_CLIENT_ID;
+        this.client_secret = SPOTIFY_CLIENT_SECRET;
+        this.callbacks = [];
+        this.oauth.on_access_token(function(at){
+            console.log("READY");
+        });
+        this.oauth.authorize();
     }
-    this.state = State.PENDING
-    this.redirect_uri = window.location.href.split("?")[0] 
 
-    this.spotify_page = "spotify.php"
-    this.client_id = SPOTIFY_CLIENT_ID
-    this.client_secret = SPOTIFY_CLIENT_SECRET 
-    this.callbacks = [];
-    console.log(this.redirect_uri)
-
-    this.oauth.on_access_token(function(at){
-        console.log("READY");
-    })
-    this.oauth.authorize()
-
-    this.request_authorization = function(){
-        var url = "https://accounts.spotify.com/authorize"
+    request_authorization(){
+        var url = "https://accounts.spotify.com/authorize";
         var client_id = this.client_id;
         var data = {
             client_id: client_id,
             response_type: "token",
-            redirect_uri: this.redirect_uri,
-        }
+            redirect_uri: this.redirect_uri
+        };
         var final_url = url + "?" + $.param(data);
         window.location.replace(final_url);
     }
 
-    this.ajax = function(obj){
+    ajax(obj){
         if(this.access_token_valid()){
             if("headers" in obj){
-                obj.headers['Authorization'] = 'Bearer ' + this.access_token
+                obj.headers['Authorization'] = 'Bearer ' + this.access_token;
             }
             else{
-                obj.headers = {'Authorization': 'Bearer '+this.access_token}
+                obj.headers = {'Authorization': 'Bearer '+this.access_token};
             }
             $.ajax(obj);
         }
@@ -45,24 +49,23 @@ var SpotifyAPI = function(){
         }
     }
 
-    this.access_token_valid = function(){
-        console.log(this.access_token,this.expiration_time)
+    access_token_valid(){
+        console.log(this.access_token,this.expiration_time);
         if(this.access_token != undefined && this.access_token != null){
             var curr_time = new Date();
-            console.log(curr_time, this.expiration_time)
+            console.log(curr_time, this.expiration_time);
             if(curr_time < this.expiration_time){
                 return true;
             }
         }
         return false;
-        
     }
-    this.get_authorization = function(){
+    get_authorization(){
         var payload = this.client_id + ":" + this.client_secret
         return 'Basic ' + window.btoa(unescape(encodeURIComponent(payload)))
     }
 
-    this.get_access_token = function(){
+    get_access_token(){
         var url = "https://accounts.spotify.com/api/token"
         var data = {
             grant_type: "authorization_code",
@@ -89,24 +92,24 @@ var SpotifyAPI = function(){
             }
         })
     }
-    this.on_access_token = function(cbk){
+    on_access_token(cbk){
         this.callbacks.push(cbk);
     }
 
-    this.ready = function(data){
-        this.state = State.READY;
+    ready(data){
+        this.state = SpotifyAPIState.READY;
         this.access_token = data.access_token;
         this.expiration_time = data.expiration_time;
 
         for(var i =0; i < this.callbacks.length; i++){
-            this.callbacks[i](data.access_token)
+            this.callbacks[i](data.access_token);
         }
         this.callbacks = [];
     }
-    this.set_access_token = function(data){
+    set_access_token(data){
         var expiration_time = new Date();
-        var curr_seconds = expiration_time.getSeconds()
-        expiration_time.setSeconds(curr_seconds + data.expires_in)
+        var curr_seconds = expiration_time.getSeconds();
+        expiration_time.setSeconds(curr_seconds + data.expires_in);
         this.access_token = data.access_token;
         this.expiration_time = expiration_time;
 
@@ -116,51 +119,51 @@ var SpotifyAPI = function(){
     }
     
    
-    this.detect_state = function(){
-        var curr_url = new URL (window.location)
+    detect_state(){
+        var curr_url = new URL (window.location);
         var params = new URLSearchParams(curr_url.hash.replace("#","?"));
-        var data = {}
-        this.state = State.PENDING;
+        var data = {};
+        this.state = SpotifyAPIState.PENDING;
         if(params.has("access_token")){
             data.access_token = params.get('access_token');
             data.expires_in = parseInt(params.get('expires_in'));
-            this.state = State.HAS_TOKEN;
+            this.state = SpotifyAPIState.HASTOKEN;
         }
         else if(params.has("error")){
-            this.state = State.ERROR;
+            this.state = SpotifyAPIState.ERROR;
         }
         else if(localStorage.getItem("spotify_access_token") !== null){
             var data = {}
             data.access_token = localStorage.getItem("spotify_access_token");
             var expiration_time_str = localStorage.getItem("spotify_expiration").split("\"")[1];
             data.expiration_time = Date.parse(expiration_time_str);
-            var curr_time = new Date()
+            var curr_time = new Date();
             if(curr_time >= data.expiration_time ){
-                this.state = State.EXPIRED;
+                this.state = SpotifyAPIState.EXPIRED;
             }
             else{
-                this.state = State.READY;
+                this.state = SpotifyAPIState.READY;
             }
         }
-        return data
+        return data;
 
     }
 
-    this.authorize = function(){
+    authorize(){
         this.detect_state();
         //first request
-        if(this.state == State.PENDING){
+        if(this.state == SpotifyAPIState.PENDING){
             this.request_authorization();
         }
         //retreived access token
-        else if(this.state == State.HAS_TOKEN){
+        else if(this.state == SpotifyAPIState.HASTOKEN){
             this.set_access_token(data);
         }
         //expired
-        else if(this.state == State.EXPIRED){
+        else if(this.state == SpotifyAPIState.EXPIRED){
             this.request_authorization();
         }
-        else if(this.state == State.READY){
+        else if(this.state == SpotifyAPIState.READY){
             this.ready(data);
         }
         throw ("unknown state: " + this.state)

@@ -1,6 +1,6 @@
 class LyricsStatusIndicator extends ModelView {
-    constructor(model,track,viewport){
-        super(model);
+    constructor(lyrics,track,viewport){
+        super(lyrics);
         this.track = track;
         this.bind("status");
         this.viewport = viewport;
@@ -13,7 +13,7 @@ class LyricsStatusIndicator extends ModelView {
                                       that.track);
             that.viewport.sidepanel.model.kind
                 = SidePanelState.LYRICS;
-        }
+        };
 
         var rows= [
             m("td",

@@ -52,7 +52,7 @@ function compute_profanity_score(counts){
         return ProfanityLevel.GOOD;
     }
 }
-function scan_for_profanity(lyrics){
+function scan_lyrics_for_profanity(lyrics){
     var iterator = lyrics.tokens();
     var term = iterator.next();
     var annots = {};
@@ -66,7 +66,7 @@ function scan_for_profanity(lyrics){
             if(!(annotation in annots)){
                 annots[annotation] = 0;
             }
-            console.log(annots)
+            console.log(annots);
             annots[annotation] += 1;
         }
         term = iterator.next();
@@ -74,3 +74,12 @@ function scan_for_profanity(lyrics){
     lyrics.status = LyricStatus.ANALYZED;
     lyrics.severity = compute_profanity_score(annots);
 }
+
+function scan_for_profanity(playlist){
+    playlist.tracks.forEach(function(track){
+        if(track.lyrics.status != LyricStatus.UNAVAILABLE){
+            scan_lyrics_for_profanity(track.lyrics);
+        }
+    });
+}
+

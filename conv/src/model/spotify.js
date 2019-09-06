@@ -7,9 +7,6 @@ class SpotifyLink extends Downloadable {
         this.track_id = track_id;
         this.track = null;
     }
-    to_track(){
-        return this.track;
-    }
     unpack(data){
         var datum = data[0];
         var album = datum.album.name;

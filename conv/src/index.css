@@ -62,6 +62,13 @@ button {
     display:flex;
     height:100%;
 }
+
+.lyrics {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    height: 20em;
+
+}
 .sidepanel {
     width: 20%; /* 0 width - change this with JavaScript */
     color:white;

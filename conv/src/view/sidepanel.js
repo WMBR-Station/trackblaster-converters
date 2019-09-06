@@ -33,13 +33,14 @@ class LyricsDownloaderSidePanel extends ModelView {
         super(queue);
         this.bind("n");
         this.viewport = viewport;
-        this.api = new MockGeniusAPI();
         this.links = [];
         this.views = [];
         var that = this;
         this.queue = queue;
         this.viewport.playlist.tracks.forEach(function(track){
-            var gen = new GeniusId(that.api,track);
+            var gen = new GeniusQuery(that.viewport.apis.lyrics_api,
+                                      that.viewport.apis.genius_api,
+                                      that.queue,track);
             that.links.push(gen);
             that.views.push(new GeniusElement(that.viewport, gen));
             that.queue.add(gen);
@@ -53,7 +54,18 @@ class LyricsDownloaderSidePanel extends ModelView {
         this.views.forEach(function(v){
             rows.push(v.view(v));
         });
-        return m("table",rows);
+        if(that.queue.done()){
+            scan_for_profanity(that.viewport.playlist);
+            console.log(that.viewport.sidepanel.state);
+            that.viewport.sidepanel.contents = new ActionSidePanel(that.viewport);
+            that.viewport.sidepanel.state = SidePanelState.ACTIONS;
+            console.log(that.viewport.sidepanel.state);
+            that.links = [];
+            return [];
+        }
+        else {
+            return m("table",rows);
+        }
     }
 }
 class SpotifyLoadElement extends ModelView {
@@ -69,7 +81,7 @@ class SpotifyLoadElement extends ModelView {
     }
 }
 class SpotifyLoadSidePanel extends ModelView {
-    constructor(viewport,links){
+    constructor(viewport,track_ids){
         var queue = new WorkQueue();
         super(queue);
         this.bind("n");
@@ -77,12 +89,10 @@ class SpotifyLoadSidePanel extends ModelView {
         this.links = [];
         this.views = [];
         this.queue = queue;
-        this.api = new MockSpotifyAPI();
         var that = this;
-        links.forEach(function(link,i){
-            var tokens = link.split("/");
-            var track_id = tokens[tokens.length - 1];
-            var dlobj = new SpotifyLink(that.api,track_id);
+        track_ids.forEach(function(track_id,i){
+            var dlobj = new SpotifyLink(that.viewport.apis.spotify_api,
+                                        track_id);
             that.links.push(dlobj);
             that.views.push(new SpotifyLoadElement(dlobj));
             that.queue.add(dlobj);
@@ -96,7 +106,7 @@ class SpotifyLoadSidePanel extends ModelView {
         });
         if(that.queue.done()){
             that.links.forEach(function(linkobj){
-                that.viewport.playlist.add(linkobj.to_track());
+                that.viewport.playlist.add(linkobj.track);
             });
             that.viewport.sidepanel.contents = new ActionSidePanel(that.viewport);
             that.viewport.sidepanel.state = SidePanelState.ACTIONS;
@@ -121,10 +131,9 @@ class SpotifyImportSidePanel {
               "copy-paste spotify playlist here"),
             m("button",{
                 onclick: function(){
-                    var text = $(".spotify-playlist").val();
-                    var links = text.split("\n");
+                    var track_ids = spotify_import($(".spotify-playlist").val());
                     that.viewport.sidepanel.contents = new SpotifyLoadSidePanel(that.viewport,
-                                                                                links);
+                                                                                track_ids);
                     that.viewport.sidepanel.state = SidePanelState.SPOTIFYLOAD;
                 }
             }, "Import")
@@ -156,7 +165,7 @@ class ActionSidePanel {
         return m("div",[
             m("button", {
                 onclick:function(){
-                    var text = that.viewport.playlist.export();
+                    var text = trackblaster_export(that.viewport.playlist);
                     download(text,"playlist.txt","plain/text");
                 }
             },"Export to Trackblaster"),
@@ -165,8 +174,7 @@ class ActionSidePanel {
                     that.viewport.sidepanel.contents = new LyricsDownloaderSidePanel(that.viewport);
                     that.viewport.sidepanel.state = SidePanelState.LYRICSDOWNLOAD;
                 }
-            }, "Get Lyrics"),
-            m("button", "Scan for Profanity"),
+            }, "Scan for Profanity"),
             m("button", "Clear Playlist")
         ]);
     }
@@ -189,10 +197,12 @@ class LyricsSidePanel extends ModelView {
             m("div",that.track.year)
         ];
         var data = [];
+        var annotations = [];
         if(lyrics.status == LyricStatus.UNAVAILABLE){
             data = [m("button","Search for Lyrics"),
                     m("textarea","paste lyrics here"),
                     m("button","Upload Lyrics")];
+            annotations = [];
         }
         else{
             var lines = [];
@@ -202,16 +212,32 @@ class LyricsSidePanel extends ModelView {
                     if(lyrics.has_annotation(idx1,idx2)){
                         console.log(lyrics.annotations);
                         var annot = lyrics.annotation(idx1,idx2);
-                        toks.push(m("mark",token));
+                        toks.push(m("mark",{class:annot},token));
                     }
                     else{
                         toks.push(token);
                     }
                     toks.push(" ");
                 });
-                lines.push(m("div",toks));
+                lines.push(m("div",{id:"line"+idx1},toks));
             });
             data = [m(".lyrics",lines)];
+
+            var jump_to_line = function(lineno){
+                var w = $('.lyrics');
+                var row = $('#line'+lineno);
+                var top = row.offset().top;
+                console.log("broken");
+                $('.lyrics').animate({scrollTop: top}, 1000 );
+            };
+            lyrics.annotations(function(lineno,tokno,annot){
+                annotations.push(m("div",{
+                    class:annot,
+                    onclick:(function(l){
+                        return function(){jump_to_line(l);};
+                    })(lineno)
+                },lyrics.token(lineno,tokno)));
+            });
         }
         return [
             m(".back-button",{
@@ -223,6 +249,7 @@ class LyricsSidePanel extends ModelView {
               },"<<"),
             m("h2","Track Information"),
             header,
+            annotations,
             m("h2","Lyrics"),
             data
         ];

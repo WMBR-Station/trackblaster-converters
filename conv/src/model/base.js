@@ -16,26 +16,38 @@ var Status = {
 class Lyrics {
     constructor(){
         this.lyrics = [];
-        this.annotations = {};
+        this._annotations = {};
         this.status = LyricStatus.UNAVAILABLE;
         this.severity = ProfanityLevel.UNKNOWN;
     }
     clear(){
         this.lyrics = [];
-        this.annotations = {};
+        this._annotations = {};
         this.status = LyricStatus.UNAVAILABLE;
+    }
+    annotations(cbk){
+        for(var key in this._annotations){
+            var args = key.split(".");
+            var line_no = parseInt(args[0]);
+            var tok_no = parseInt(args[1]);
+            var annot = this._annotations[key];
+            cbk(line_no,tok_no,annot);
+        }
     }
     annotate(line_no,token_no,annot){
         var key = line_no + "."+token_no;
-        this.annotations[key] = annot;
+        this._annotations[key] = annot;
     }
     has_annotation(i,j){
         var key = i+ "."+ j;
-        return key in this.annotations;
+        return key in this._annotations;
     }
     annotation(i,j){
         var key = i+ "."+ j;
-        return this.annotations[key];
+        return this._annotations[key];
+    }
+    token(i,j){
+        return this.lyrics[i][j];
     }
     *tokens(){
         for(var i=0; i < this.lyrics.length; i += 1){
@@ -62,10 +74,6 @@ class Track {
         this.lyrics = new Lyrics();
         this.spotify_uri = null;
     }
-
-    set_lyrics(lyrics){
-        this.lyrics = lyrics;
-    }
 }
 
 class Playlist {
@@ -77,18 +85,8 @@ class Playlist {
         this.tracks.push(track);
         this.n += 1;
     }
-    export(){
-        var str = "";
-        var delim = "\t";
-        var endl = "\n";
-        var header = ["Hidden","Break","Artist","ArtistLink","Composer","Song","Version","Album","Format","Label","LabelLink","Year","Misc","New","Comp","Comment"];
-
-        str += header.join(delim)+endl;
-        for(var i=0; i < this.tracks.length; i++){
-            var track = this.tracks[i]
-            var vals = ["0","0",track.artists,"","",track.title,"",track.album,"","","",track.year,"","",0,""]
-            str += vals.join(delim)+endl;
-        }
-        return str;
+    clear(){
+        this.tracks = [];
+        this.n = 0;
     }
 }

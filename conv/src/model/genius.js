@@ -14,12 +14,12 @@ class GeniusLyrics extends Downloadable {
         lines.forEach(function(line,idx){
             that.track.lyrics.add_line(line);
         });
-        this.track.status = LyricStatus.UPLOADED;
+        this.track.lyrics.status = LyricStatus.UPLOADED;
     }
     request(cbk){
         var that = this;
         if(this.lyric_path == null){
-            this.track.set_lyrics(null);
+            this.track.lyrics.status = LyricStatus.UNAVAILABLE;
             return;
         }
         this.genius_lyric_api.get({
@@ -111,4 +111,40 @@ class GeniusId extends Downloadable {
         });
     }
 
+}
+
+class GeniusQuery extends Downloadable {
+    constructor(lyric_api,genius_api,queue,track){
+        super();
+        this.track = track;
+        this.queue = queue;
+        this.genius_api = genius_api;
+        this.lyric_api = lyric_api;
+        this.genius_id = new GeniusId(genius_api,track);
+    }
+
+    request(cbk){
+        var that = this;
+        if(this.genius_lyrics == null){
+            this.genius_id.request(function(status){
+                if(status == Status.SUCCESS){
+                    that.genius_lyrics = new GeniusLyrics(that.lyric_api,
+                                                          that.track,
+                                                          that.genius_id.lyric_path);
+                    that.queue.add(that);
+                    if(that.genius_id.lyric_path == null){
+                        status = Status.FAILURE;
+                    }
+                    else{
+                        status = Status.INPROGRESS;
+                    }
+                    console.log(that.track);
+                }
+                cbk(status);
+            });
+        }
+        else{
+            this.genius_lyrics.request(cbk);
+        }
+    }
 }

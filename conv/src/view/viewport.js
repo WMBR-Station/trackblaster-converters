@@ -1,11 +1,10 @@
 
 class Viewport {
-    constructor(){
+    constructor(apis){
+        this.apis = apis;
         this.playlist = new Playlist();
         this.sidepanel = new SidePanel(this);
         this.playlist_view = new PlaylistView(this.playlist,this);
-        this.action_footer = null;
-        this.import_dialog = null;
     }
     view(arg){
         var that = arg.tag;

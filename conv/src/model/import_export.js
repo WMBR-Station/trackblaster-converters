@@ -14,9 +14,8 @@ function spotify_import(plaintext){
     return track_ids;
 }
 
-function itunes_import(plaintext){
+function itunes_import(playlist,plaintext){
     var tracks = plaintext.split("\n");
-    var playlist = new Playlist();
     for(var i=0; i < tracks.length; i++){
         var data = tracks[i].split("\t")
         var title = data[0]

@@ -164,10 +164,9 @@ class ItunesImportSidePanel {
                     reader.onload = function(data){
                         that.viewport.playlist.clear();
                         console.log(reader.result);
-                        var imported = itunes_import(reader.result);
-                        for(var i=0; i < imported.tracks; i++){
-                            that.viewport.playlist.add(imported.tracks[i]);
-                        }
+                        that.viewport.playlist.clear();
+                        var imported = itunes_import(that.viewport.playlist,
+                                                     reader.result);
 
                     };
                     reader.readAsText(file,'utf8');

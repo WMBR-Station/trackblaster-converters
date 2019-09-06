@@ -142,9 +142,32 @@ class SpotifyImportSidePanel {
         ];
     }
 }
+
+class ITunesImportSidePanel {
+    constructor(viewport){
+        this.viewport = viewport;
+        this.loader = null;
+        this.state = SidePanelState.ITUNESIMPORT;
+    }
+    back(){
+        return new ImportSidePanel(this.viewport);
+    }
+    view(that){
+        return [
+            m("h1", "Itunes Importer"),
+            m("button",{
+                class:'big-button',
+                onclick: function(){
+                    console.log("unimplemented");
+                }
+            }, "Import")
+        ];
+    }
+}
 class ImportSidePanel {
     constructor(viewport){
         this.viewport = viewport;
+        this.state = SidePanelState.IMPORT;
     }
     back(){
         return null;
@@ -155,11 +178,13 @@ class ImportSidePanel {
             m("button",{
                 class:'big-button',
                 onclick:function(){
-                    that.viewport.sidepanel.contents = new SpotifyImportSidePanel(that.viewport);
-                    that.viewport.sidepanel.state = SidePanelState.SPOTIFYIMPORT;
+                    that.viewport.sidepanel.set_contents(new SpotifyImportSidePanel(that.viewport));
                 }},"Spotify"),
             m("button",{
-                class:'big-button'
+                class:'big-button',
+                onclick:function(){
+                    that.viewport.sidepanel.set_contents(new ItunesImportSidePanel(that.viewport));
+                }
             },"ITunes"),
             m("button",{
                 class:'big-button'

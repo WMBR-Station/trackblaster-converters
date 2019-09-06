@@ -47,10 +47,8 @@ class SpotifyAPI{
     }
 
     access_token_valid(){
-        console.log(this.access_token,this.expiration_time);
         if(this.access_token != undefined && this.access_token != null){
             var curr_time = new Date();
-            console.log(curr_time, this.expiration_time);
             if(curr_time < this.expiration_time){
                 return true;
             }
@@ -147,21 +145,25 @@ class SpotifyAPI{
     }
 
     authorize(){
-        this.detect_state();
+        var data = this.detect_state();
         //first request
         if(this.state == SpotifyAPIState.PENDING){
             this.request_authorization();
+            return;
         }
         //retreived access token
         else if(this.state == SpotifyAPIState.HASTOKEN){
             this.set_access_token(data);
+            return;
         }
         //expired
         else if(this.state == SpotifyAPIState.EXPIRED){
             this.request_authorization();
+            return;
         }
         else if(this.state == SpotifyAPIState.READY){
             this.ready(data);
+            return;
         }
         throw ("unknown state: " + this.state)
     }

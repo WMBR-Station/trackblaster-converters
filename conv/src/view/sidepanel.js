@@ -167,6 +167,14 @@ class ItunesImportSidePanel {
                         that.viewport.playlist.clear();
                         itunes_import(that.viewport.playlist,
                                       reader.result);
+                        if(that.viewport.playlists.tracks.length > 0){
+                            that.viewport.sidepanel
+                                .set_contents(new ActionSidePanel(that.viewport));
+                        }
+                        else{
+                            that.viewport.sidepanel
+                                .set_contents(new ImportSidePanel(that.viewport));
+                        }
 
                     };
                     reader.readAsText(file,'utf8');

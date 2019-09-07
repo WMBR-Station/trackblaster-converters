@@ -14,6 +14,11 @@ function spotify_import(plaintext){
     return track_ids;
 }
 
+function is_defined(token){
+	return token != "" 
+		&& token != null 
+		&& token != undefined;
+}
 function itunes_import(playlist,plaintext){
     var tracks = plaintext.split("\r");
     for(var i=1; i < tracks.length; i++){   //start from 1 to skip the header
@@ -22,8 +27,10 @@ function itunes_import(playlist,plaintext){
         var artists = [data[1]];
         var album = data[3];
         var year = data[16];
-        track = new Track(title,artists,album, year);
-        playlist.add(track);
+	if(is_defined(title) && is_defined(data[1])){
+        	track = new Track(title,artists,album, year);
+        	playlist.add(track);
+	}
     }
 }
 

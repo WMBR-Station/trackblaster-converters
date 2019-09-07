@@ -6,9 +6,13 @@ class SpotifyLink extends Downloadable {
         this.spotify_api = spotify_api;
         this.track_id = track_id;
         this.track = null;
+        this.spotify_api.on_access_token(function(at){
+            console.log("Spotify API Ready");
+        });
+        this.spotify_api.authorize();
     }
     unpack(datum){
-	console.log(datum);
+	      console.log(datum);
         var album = datum.album.name;
         var album_type = datum.album.album_type;
         var release_date = datum.album.release_date;
@@ -20,9 +24,11 @@ class SpotifyLink extends Downloadable {
         var title = datum.name;
         var spotify_uri = datum.uri;
         this.track = new Track(title,artists,album,release_date);
-	this.track.spotify_uri = spotify_uri;
+	      this.track.spotify_uri = spotify_uri;
        	console.log(this.track);
     }
+
+
     request(cbk){
         var url = "https://api.spotify.com/v1/tracks/"+this.track_id;
         var that = this;

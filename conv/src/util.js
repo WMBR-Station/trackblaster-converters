@@ -7,7 +7,28 @@ function argmin(array) {
     return array.map((x, i) => [x, i])
         .reduce((r, a) => (a[0] < r[0] ? a : r))[1];
 }
-
+function fill_missing(dict,keys,value){
+    keys.forEach(function(key,idx){
+        if(!(key in dict)){
+            dict[key] = value;
+        }
+    });
+}
+function to_dict(keys,values){
+    if(keys.length < values.length){
+        throw "to_dict: keys and values are not the same length";
+    }
+    var els = {};
+    for(var i=0; i < values.length; i += 1){
+        els[keys[i]] = values[i];
+    }
+    return els;
+}
+function is_defined(token){
+	  return token != ""
+		    && token != null
+		    && token != undefined;
+}
 /**
 * @param {string} a
  * @param {string} b

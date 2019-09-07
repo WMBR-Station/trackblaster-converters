@@ -129,8 +129,10 @@ class SpotifyImportSidePanel {
         return [
             m("h1", "Spotify Importer"),
             m("textarea",
-              {class:"spotify-playlist"},
-              "copy-paste spotify playlist here"),
+              {
+                  class:"spotify-playlist",
+                  placeholder:"copy-paste spotify playlist here"
+              },""),
             m("button",{
                 class:'big-button',
                 onclick: function(){
@@ -143,6 +145,44 @@ class SpotifyImportSidePanel {
     }
 }
 
+class TrackblasterImportSidePanel {
+    constructor(viewport){
+        this.viewport = viewport;
+        this.state = SidePanelState.ITUNESIMPORT;
+    }
+    back(){
+        return new ImportSidePanel(this.viewport);
+    }
+    view(that){
+        var that = this;
+        return [
+            m("h1", "Trackblaster Importer"),
+            m("input",{
+                type:"file",
+                onchange:function(e){
+                    var file = e.target.files[0];
+                    var reader = new FileReader();
+                    reader.onload = function(data){
+                        that.viewport.playlist.clear();
+                        trackblaster_import(that.viewport.playlist,
+                                      reader.result);
+                        if(that.viewport.playlist.tracks.length > 0){
+                            that.viewport.sidepanel
+                                .set_contents(new ActionSidePanel(that.viewport));
+                        }
+                        else{
+                            that.viewport.sidepanel
+                                .set_contents(new ImportSidePanel(that.viewport));
+                        }
+
+                    };
+                    reader.readAsText(file,'utf8');
+
+                }
+            },"Upload Itunes File"),
+        ];
+    }
+}
 class ItunesImportSidePanel {
     constructor(viewport){
         this.viewport = viewport;
@@ -159,11 +199,8 @@ class ItunesImportSidePanel {
                 type:"file",
                 onchange:function(e){
                     var file = e.target.files[0];
-                    console.log(file);
                     var reader = new FileReader();
                     reader.onload = function(data){
-                        that.viewport.playlist.clear();
-                        console.log(reader.result);
                         that.viewport.playlist.clear();
                         itunes_import(that.viewport.playlist,
                                       reader.result);
@@ -207,7 +244,10 @@ class ImportSidePanel {
                 }
             },"ITunes"),
             m("button",{
-                class:'big-button'
+                class:'big-button',
+                onclick:function(){
+                    that.viewport.sidepanel.set_contents(new TrackblasterImportSidePanel(that.viewport));
+                }
             },"Trackblaster")
         ];
     }
@@ -231,10 +271,19 @@ class ActionSidePanel {
             m("button", {
                 class:'big-button',
                 onclick:function(){
-                    that.viewport.sidepanel.contents = new LyricsDownloaderSidePanel(that.viewport);
-                    that.viewport.sidepanel.state = SidePanelState.LYRICSDOWNLOAD;
+                    that.viewport.sidepanel
+                        .set_contents(new LyricsDownloaderSidePanel(that.viewport));
                 }
-            }, "Scan for Profanity")
+            }, "Analyze Lyrics"),
+            m("button", {
+                class:'danger-button delete-playlist-button',
+                onclick:function(){
+                    that.viewport.playlist.clear();
+                    that.viewport.sidepanel
+                        .set_contents(new ImportSidePanel(that.viewport));
+                }
+            }, "Delete Playlist")
+
         ]);
     }
 }
@@ -344,8 +393,8 @@ class LyricsSidePanel extends ModelView {
                               },"Upload");
         var lyrics_area =  m("textarea",{
             id:"user-lyrics",
-            hint:"paste lyrics here"
-        }, "paste lyrics here");
+            placeholder:"copy-paste lyrics here"
+        }, "");
 
         return m("div",[lyrics_search,
                         lyrics_area,

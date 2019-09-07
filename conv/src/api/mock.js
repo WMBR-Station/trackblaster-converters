@@ -5,8 +5,14 @@ class MockSpotifyAPI {
         this.names = ["Lady Gaga", "Dio", "Nic Cage", "Bob Mackie"]
         this.songs = ["Poker Face", "Rainbow", "Some Kind of Wonderful"]
     }
+    on_access_token(cbk){
+        cbk(null);
+    }
+    authorize(){
+        return;
+    }
     ajax(args){
-      args.success(this.templ)
+        args.success(this.templ);
     }
 }
 

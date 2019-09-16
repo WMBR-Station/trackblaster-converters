@@ -8,82 +8,147 @@
   <script src="js-lib/fuzzyset.js"></script>
   <script src="js/data.js"></script>
   <script src="js/mock_data.js"></script>
+
+  <script src="js/profanity.models.js"></script>
+  <script src="js/profanity.views.js"></script>
+  <script src="js/profanity.analyzer.js"></script>
+  <script src="js/profanity.downloader.js"></script>
+  <script src="js/profanity.uploader.js"></script>
   <script src="js/profanity.js"></script>
 
   <link href="css/style.css" rel="stylesheet">
-    <link href="css/profanity-style.css" rel="stylesheet">
+  <link href="css/profanity-style.css" rel="stylesheet">
 </head>
 <body class="container">
 
+    <div class ="modal fade in" id="upload-dialog" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Upload Trackblaster Playlist</h2>
+                    Upload the trackblaster playlist file. The Profanity Screening Tool will scan the playlist for profanity.
+                </div>
+                <div class="modal-body">
+                    <input id="file" type="file"></input>
+                </div>
+                <div class ="modal-footer">
+                    <div id="status"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class ="modal fade in" id="edit-lyric-dialog" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Edit Lyrics</h2>
+                    Copy-paste the song's lyrics into the text box.
+                </div>
+                <div class="modal-body">
+                    <textarea id="new-lyrics"
+                              class="lyrics-input-box steal-scroll"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button id="save-lyrics">Save Lyrics</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="panel-primary">
-    <div class="panel-heading track-panel">
-        <h2 class="row">Profanity Screening Tool</h2>
-        <div class="row converter">
-            Upload the trackblaster playlist file. The Profanity Screening Tool will scan the playlist
-            for profanity.
-        </div>
-        <div class="row">
-            <div class="col-md-3">Trackblaster File:</div>
-            <input class="col-md-5" id="file" type="file"></input>
-        </div>
-    </div>
-    <div class="panel-body row">
-        <div id="sidebar" class="panel-body col-md-3">
-						<div class='track-panel'>
-            <div id="track-song" class="track-field song">XXX</div>
-            <div id="track-artist" class="track-field artist">XXX</div>
-            <div id="track-album" class="track-field album">XXX</div>
-            <div id="track-label" class="track-field music-label">XXX</div>
-            <div id="track-year" class="track-field year">XXX</div>
-						</div>
-            <div id="data-exists">
-								<div class="profanity-selector" ></div>
-								<div class="track-field bad-word-nav profanity-box">
-									<span class="template bad-word">bad word</span>
-								</div>
-
-                <div id="lyrics" class="lyrics-box track-field steal-scroll"></div>
-                <button id="incorrect-lyrics">Incorrect Lyrics</button>
-            </div>
-            <div id="no-data">
-                <div class='track-field'>
-                    We could not find lyrics for this song. please copy the song lyrics below.
+        <h2>Profanity Detector</h2>
+        <div id="metadata-container">
+            <div id="metadata" class="hide">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-1"><image src="" id="art"></image></div>
+                        <div class="container col-md-10">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <span class="meta-label">song:</span>
+                                    <span class="meta-field song">XXX</span>
+                                </div>
+                                <div class="col-md-5">
+                                    <span class="meta-label">artist:</span>
+                                    <span class="meta-field artist">XXX</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <span class="meta-label">album:</span>
+                                    <span class="meta-field album">XXX</span>
+                                </div>
+                                <div class="col-md-5">
+                                   <span class="meta-label">label:</span>
+                                   <span class="meta-field music-label">XXX</span>
+                                </div>
+                                <div class="col-md-1">
+                                   <span class="meta-label">year:</span>
+                                   <span class="meta-field year">XXX</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 meta-field status">
+                                    <span class="status"></span>
+                                </div>
+                                <div class="col-md-2 meta-field">
+                                    <button id="edit-lyrics">
+                                          Edit Lyrics</button>
+                                </div>
+                                <div class="col-md-3 meta-field">
+                                    <button id="search-lyrics">
+                                          Search Lyrics</button>
+                                </div>
+                                <div class="col-md-3 profanity">XXX</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <button id="search-lyrics">Search for Lyrics</button>
-                <textarea id="new-lyrics" class="lyrics-input-box steal-scroll">
-                </textarea>
-                <button id="save-lyrics">Save Lyrics</button>
-
             </div>
         </div>
 
-        <div class="panel-body col-md-9">
-
-            <div id="details">
-                <div class="header row">
-	                <div class="col-md-1"></div>
-	                <div class="col-md-3">Song</div>
-	                <div class="col-md-3">Artist</div>
-	                <div class="col-md-3">Album</div>
-									<div class="templ row hidden track-entry">
-											<div class="col-md-1">
-												<div class="swatch loading "></div>
-											</div>
-		                	<div class="song col-md-3"> </div>
-		                	<div class="artist col-md-3"> </div>
-		                	<div class="album col-md-3"> </div>
-		              </div>
+        <div id="sidebar-container" "class="panel-body">
+            <div id="sidebar" class="hide">
+                <div class="sidebar-header">
+                    <h3><span class="color-bar">&nbsp;&nbsp;</span>&nbsp;Lyrics</h3>
                 </div>
-								<div class="track-box">
+                <div class="profanity-box" >
+                    <span class="templ hidden">
+                        <span class="word">XXX</span>
+                        (<span class="locs">XXX</span>
+                        <span class="len">XXX</span>)
+                    </span>
+                </div>
+                <div class="lyrics-box track-field steal-scroll"></div>
+            </div>
 
-							  </div>
+            <div id="tracklist">
+                <div>
+                    <div class="header row">
+                        <div class="track-header col-md-1"></div>
+                        <div class="track-header col-md-3">Song</div>
+                        <div class="track-header col-md-3">Artist</div>
+                        <div class="track-header col-md-3">Album</div>
+                    </div>
+                    <div id="details">
+                        <div class="templ row hidden track">
+                            <div class="col-md-1">
+                                <div class="swatch loading "></div>
+                            </div>
+                            <div class="track-field song col-md-3"> </div>
+                            <div class="track-field artist col-md-3"> </div>
+                            <div class="track-field album col-md-3"> </div>
+                        </div>
+                    <div class="track-box">
+
+                    </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-
-    <div class="panel panel-footer">
-        STATUS
-    </div>
+        <div class="panel panel-footer">
+            STATUS
+        </div>
     </div>
 
 </body>

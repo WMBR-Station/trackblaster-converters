@@ -1,0 +1,178 @@
+html,body {
+    height:98%;
+    background-color:black;
+    color:#f1f2f6;
+    font-family: Helvetica, Arial, Sans-Serif;
+    scrollbar-face-color: #646464;
+    scrollbar-base-color: #646464;
+    scrollbar-3dlight-color: #646464;
+    scrollbar-highlight-color: #646464;
+    scrollbar-track-color: #000;
+    scrollbar-arrow-color: #000;
+    scrollbar-shadow-color: #646464;
+    scrollbar-dark-shadow-color: #646464;
+}
+
+::-webkit-scrollbar { width: 8px; height: 3px;}
+::-webkit-scrollbar-button {  background-color: #666; }
+::-webkit-scrollbar-track {  background-color: #646464;}
+::-webkit-scrollbar-track-piece { background-color: #000;}
+::-webkit-scrollbar-thumb { height: 50px; background-color: #666; border-radius: 3px;}
+::-webkit-scrollbar-corner { background-color: #646464;}
+::-webkit-resizer { background-color: #666;}
+
+th {
+    background-color:#3c6382;
+}
+td {
+    text-align:center;
+}
+select {
+    font-size:1em;
+}
+textarea {
+    width:95%;
+    padding:0.2em;
+    margin:0.2em;
+    height:10em;
+    background-color:#dfe4ea;
+    color:#2f3542;
+}
+button {
+    padding:0.2em;
+    margin:0.2em;
+    background-color:#0a3d62;
+    border-color:#3c6382;
+    font-size:1em;
+    color:white;
+}
+.delete-playlist-button {
+    position:absolute;
+    top:0.1em;
+    left:0.1em;
+
+}
+.delete-lyrics-button {
+    position:absolute;
+    top:0.1em;
+    left:0.1em;
+
+}
+.danger-button {
+    background-color:#c23616;
+    border-color:#e84118;
+    color:white;
+}
+.danger-button:hover {
+    background-color:#e84118;
+    border-color:#f1c40f;
+}
+.big-button:hover {
+    background-color:#e67e22;
+    border-color:#d35400;
+}
+.big-button {
+    background-color:#4a69bd;
+    border-color:#6a89cc;
+    border-radius:2px;
+    font-size:1.2em;
+    width:95%;
+}
+.back-button:hover {
+    color:white;
+}
+.back-button {
+    position:absolute;
+    top:0.1em;
+    right:0.1em;
+    color:#3498db;
+    background-color:transparent;
+    border-color:transparent;
+    font-size:1.0em;
+}
+.upload-lyrics:hover{
+    background-color:#ff6b81;
+    border-color:#ffa502;
+}
+.upload-lyrics{
+    background-color:#ff4757;
+    border-color:#ff6b81;
+}
+.view-lyrics:hover{
+    background-color:#706fd3;
+    border-color:#ffa502;
+}
+.view-lyrics{
+    background-color:#474787;
+    border-color:#706fd3;
+}
+.in-progress {
+    color:#0097e6;
+}
+.pending {
+    color:#7f8fa6;
+}
+.success {
+    color:#7bed9f;
+}
+.failure {
+    color:#ff6b81;
+}
+.severe {
+    background-color: #b71540;
+    color:white;
+}
+.bad {
+    background-color: #EE5A24;
+    color:white;
+}
+.mild {
+    background-color: #f6b93b;
+    color: #444;
+}
+.good {
+    background-color:#079992;
+    color: white;
+}
+
+.unknown {
+    background-color:#57606f;
+    color:white;
+}
+
+.viewport{
+    display:flex;
+    height:100%;
+}
+
+.lyrics {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    height: 20em;
+
+}
+.sidepanel {
+    width: 20%; /* 0 width - change this with JavaScript */
+    background-color: #111; /* Black*/
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding-top: 60px; /* Place content 60px from the top */
+    transition: 0.5s; /* 0.5 second transition effect to slide in the sidepanel */
+    position:relative;
+    text-align:center;
+}
+
+.playlist {
+    flex-grow:1;
+    height:100%;
+    background-color: #222; /* Black*/
+    overflow-y:scroll;
+    text-align:center;
+    color:white;
+}
+.playlist-table {
+    color:white;
+}
+
+.subtle-text {
+    opacity:0.3;
+}

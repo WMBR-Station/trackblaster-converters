@@ -84,6 +84,7 @@ class SpotifyLoadSidePanel extends ModelView {
         this.links = [];
         this.views = [];
         this.queue = queue;
+        this.cache = new SpotifyCache();
         var that = this;
         track_ids.forEach(function(track_id,i){
             var dlobj = new SpotifyLink(that.viewport.apis.spotify_api,
@@ -94,7 +95,7 @@ class SpotifyLoadSidePanel extends ModelView {
         });
         this.queue.execute();
         this.bind("n");
-	m.redraw();
+	      m.redraw();
     }
     back(){
         return new SpotifyImportSidePanel(this.viewport);
@@ -108,6 +109,7 @@ class SpotifyLoadSidePanel extends ModelView {
             that.links.forEach(function(linkobj){
                 that.viewport.playlist.add(linkobj.track);
             });
+            that.cache.clear();
             that.viewport.sidepanel.set_contents(new ActionSidePanel(that.viewport));
             that.links = [];
         }
@@ -120,6 +122,7 @@ class SpotifyLoadSidePanel extends ModelView {
 class SpotifyImportSidePanel {
     constructor(viewport){
         this.viewport = viewport;
+        this.cache = new SpotifyCache();
         this.loader = null;
     }
     back(){
@@ -137,6 +140,8 @@ class SpotifyImportSidePanel {
                 class:'big-button',
                 onclick: function(){
                     var track_ids = spotify_import($(".spotify-playlist").val());
+                    that.cache.cache(track_ids);
+                    return;
                     that.viewport.sidepanel.set_contents(new SpotifyLoadSidePanel(that.viewport,
                                                                                   track_ids));
                 }
@@ -225,6 +230,10 @@ class ImportSidePanel {
     constructor(viewport){
         this.viewport = viewport;
         this.state = SidePanelState.IMPORT;
+        this.spotify_cache = new SpotifyCache();
+        if(!this.spotify_cache.is_empty()){
+            new SpotifyLoadSidePanel(this.viewport,this.spotify_cache.get());
+        }
     }
     back(){
         return null;

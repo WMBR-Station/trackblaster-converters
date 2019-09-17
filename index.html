@@ -18,6 +18,7 @@
     <script src="src/api/spotify_api.js"></script>
     <script src="src/api/api.js"></script>
 
+    <script src="src/model/cache.js"></script>
     <script src="src/model/genius.js"></script>
     <script src="src/model/spotify.js"></script>
     <script src="src/model/base.js"></script>
@@ -37,7 +38,6 @@
      //var mgr = new MockAPIManager();
      var viewport = new Viewport(mgr);
      m.mount(root, viewport);
-
      function mockit(){
          var tlist = new Playlist();
          m.mount(root, viewport);

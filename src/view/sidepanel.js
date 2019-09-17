@@ -141,7 +141,6 @@ class SpotifyImportSidePanel {
                 onclick: function(){
                     var track_ids = spotify_import($(".spotify-playlist").val());
                     that.cache.cache(track_ids);
-                    return;
                     that.viewport.sidepanel.set_contents(new SpotifyLoadSidePanel(that.viewport,
                                                                                   track_ids));
                 }
@@ -230,10 +229,6 @@ class ImportSidePanel {
     constructor(viewport){
         this.viewport = viewport;
         this.state = SidePanelState.IMPORT;
-        this.spotify_cache = new SpotifyCache();
-        if(!this.spotify_cache.is_empty()){
-            new SpotifyLoadSidePanel(this.viewport,this.spotify_cache.get());
-        }
     }
     back(){
         return null;
@@ -454,8 +449,15 @@ class SidePanel extends ModelView {
     constructor(viewport){
         super(new SidePanelModel());
         this.bind("kind");
-        this.viewport = viewport;
-        this.set_contents(new ImportSidePanel(this.viewport));
+        this.viewport = viewport;  
+	var spotify_cache = new SpotifyCache();
+        if(!spotify_cache.is_empty()){
+            this.set_contents(new SpotifyLoadSidePanel(this.viewport,spotify_cache.get()));
+            spotify_cache.clear();
+        }
+	else {
+            this.set_contents(new ImportSidePanel(this.viewport));
+	}
     }
     set_contents(obj){
         this.contents = obj;

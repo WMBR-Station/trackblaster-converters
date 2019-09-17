@@ -8,7 +8,6 @@ class GeniusLyrics extends Downloadable {
         this.track = track;
     }
     unpack(data){
-	console.log(data);
 	this.track.lyrics.from_text(data);
         scan_for_profanity(this.track.lyrics);
 
@@ -55,6 +54,8 @@ class GeniusTrack {
     }
 }
 
+// other lyric fetching services to consider
+// MusixMatch, LyricView
 class GeniusId extends Downloadable {
 
     constructor(genius_api,track){
@@ -69,6 +70,7 @@ class GeniusId extends Downloadable {
         var tracks = [];
         var scores = [];
         var that = this;
+	console.log("===========");
         results.forEach(function(entry,index){
             if(entry["type"] == "song" &&
                entry.result.lyrics_state == "complete"){
@@ -77,21 +79,31 @@ class GeniusId extends Downloadable {
                                          result.primary_artist.name,
                                          result.id,
                                          result.path.substr(1));
+		var s1 = t1.similarity(that.track);
                 tracks.push(t1);
-                scores.push(t1.similarity(that.track));
+                scores.push(s1);
+                console.log(t1.title,t1.artist,s1);
                 var t2 = new GeniusTrack(result.title_with_featured,
                                          result.primary_artist.name,
                                          result.id,
                                          result.path.substr(1));
+		var s2 = t2.similarity(that.track);
                 tracks.push(t2);
-                scores.push(t2.similarity(that.track));
-
+                scores.push(s2);
+                console.log(t2.title,t2.artist,s2);
             }
         });
 	if(scores.length == 0){
 	   return;
 	}
         var best_tid = argmin(scores);
+	if(scores[best_tid] > 4){
+	   console.log("== NOT FOUND ==");
+	   return;
+	}
+	console.log("===========");
+	console.log(that.track.title,that.track.artist);
+	console.log(tracks[best_tid]);
         this.genius_id = tracks[best_tid].id;
         this.lyric_path = tracks[best_tid].lyric_path;
     }

@@ -1,53 +1,62 @@
 <head>
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pegjs/0.9.0/peg.min.js"></script>
-      
-	<script   src="https://code.jquery.com/jquery-3.1.0.min.js"   integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s="   crossorigin="anonymous"></script>
-	
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-	
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.0/moment.min.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>My Application</title>
 
-		
-	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
-  	<link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="styles/style.css">
 
-    <style>
-     .header {
-        text-align:center;
-     }
-     .sub.header {
-         color:grey;
-         padding-bottom:2em;
-     }
-     .option {
-         font-size:1.5em;
-         padding:0.5em;
-     }
-     .sub2.header {
-         color:grey;
-         padding-top:2em;
-     }
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/mithril/mithril.js"></script>
 
-    </style>
+    <script src="src/download.js"></script>
+    <script src="src/data.js"></script>
+    <script src="src/util.js"></script>
+
+    <script src="src/api/mock.js"></script>
+    <script src="src/api/tokens.js"></script>
+    <script src="src/api/genius_api.js"></script>
+    <script src="src/api/spotify_api.js"></script>
+    <script src="src/api/api.js"></script>
+
+    <script src="src/model/genius.js"></script>
+    <script src="src/model/spotify.js"></script>
+    <script src="src/model/base.js"></script>
+    <script src="src/model/profanity_detector.js"></script>
+    <script src="src/model/import_export.js"></script>
+
+    <script src="src/view/tracklist.js"></script>
+    <script src="src/view/sidepanel.js"></script>
+    <script src="src/view/viewport.js"></script>
+
+
 </head>
-<body class="container">
-	<h1 class="header row">Trackblaster Conversion Utilities</h2>
-  <h2 class="header row sub" >Convert your playlists to trackblaster here!</h2>
-  <div class="row option header">
-      <a href="cue.html">CUE File &rarr; Trackblaster Playlist </a>
-  </div>
-  <div class="row option header">
-      <a href="spotify.html">Spotify Playlist &rarr; Trackblaster Playlist </a>
-  </div>
-  <div class="row option header">
-      <a href="itunes_xml.html">ITunes XML Playlist &rarr; Trackblaster Playlist </a>
-  </div>
-  <h2 class="header row sub2" >Help Files</h2>
-  <div class="row option header">
-      <a href="help.html">How to Import a Trackblaster Playlist to Trackblaster</a>
-  </div>
+<body>
+    <script>
+     var root = document.body;
+     var mgr = new APIManager();
+     //var mgr = new MockAPIManager();
+     var viewport = new Viewport(mgr);
+     m.mount(root, viewport);
 
+     function mockit(){
+         var tlist = new Playlist();
+         m.mount(root, viewport);
+         var t1 = new Track("Vampire Kiss", "Nic Cage", "Doki Doki Love");
+         t1.lyrics.add_line("never going to give you up");
+         t1.lyrics.add_line("never turn you round and desert you");
+         t1.lyrics.add_line("never gonna let you down hell hmm");
+         t1.lyrics.status = LyricStatus.UPLOADED;
+         scan_for_profanity(t1.lyrics);
+         var t2 = new Track("Port of Call", "Nic Cage", "Doki Doki Love");
+         t2.lyrics.add_line("fuck shit");
+         t2.lyrics.status = LyricStatus.UPLOADED;
+         scan_for_profanity(t2.lyrics);
+         var t3 = new Track("Leaving Las Vegas", "Nic Cage", "Doki Doki Love");
+         tlist.add(t1);
+         tlist.add(t2);
+         tlist.add(t3);
+         //model.salutation = "nihao";
+     }
+    </script>
 </body>
-  
+
